@@ -47,14 +47,14 @@ namespace Mini_ECommerce.Persistence.Concretes.Repositories
             return await query.FirstOrDefaultAsync(method);
         }
         public async Task<T?> GetByIdAsync(string id, bool tracking = true)
-        //=> await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
+        //=> await Table.FirstOrDefaultAsync(e => e.Id == Guid.Parse(id));
         //=> await Table.FindAsync(Guid.Parse(id));
         {
             var query = Table.AsQueryable();
             if (!tracking)
                 query = Table.AsNoTracking();
 
-            return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
+            return await query.FirstOrDefaultAsync(e => e.Id == Guid.Parse(id));
         }
     }
 }

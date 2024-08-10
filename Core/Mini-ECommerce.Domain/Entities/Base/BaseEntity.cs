@@ -10,6 +10,6 @@ namespace Mini_ECommerce.Domain.Entities.Base
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        virtual public DateTime UpdatedAt { get; set; }
+        virtual public DateTime? UpdatedAt { get; set; }
     }
 }
