@@ -1,4 +1,8 @@
 
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Mini_ECommerce.Application.Validators.Product;
+using Mini_ECommerce.Infrastructure.Filters;
 using Mini_ECommerce.Persistence;
 
 namespace Mini_ECommerce.API
@@ -12,7 +16,14 @@ namespace Mini_ECommerce.API
             // Add services to the container.
             builder.Services.AddPersistenceServices();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
+
+            //builder.Services.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>());
+
+            //builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+
+            builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
