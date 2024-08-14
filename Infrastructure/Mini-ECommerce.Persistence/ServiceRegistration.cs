@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mini_ECommerce.Application.Abstractions.Repositories.Customer;
 using Mini_ECommerce.Application.Abstractions.Repositories.Order;
@@ -18,9 +19,11 @@ namespace Mini_ECommerce.Persistence
 {
     public static class ServiceRegistration
     {
-        public static void AddPersistenceServices (this IServiceCollection services)
+        public static void AddPersistenceServices (this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+            //services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
+           
+            services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
 
             services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
             services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
