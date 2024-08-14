@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Mini_ECommerce.Application.Validators.Product;
+using Mini_ECommerce.Infrastructure;
 using Mini_ECommerce.Infrastructure.Filters;
 using Mini_ECommerce.Persistence;
 
@@ -13,16 +14,24 @@ namespace Mini_ECommerce.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddPersistenceServices();
+            builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
-            builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
+            // Add services to the container.
+            builder.Services.AddPersistenceServices(builder.Configuration);
+            builder.Services.AddInfrastructureServices();
+
+            builder.Services.AddControllers();
+
+            // builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
 
             //builder.Services.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>());
 
-            //builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
 
             builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+
+            builder.Services.AddAuthentication();  // Add the specific authentication scheme you are using
+            builder.Services.AddAuthorization();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -37,8 +46,10 @@ namespace Mini_ECommerce.API
                 app.UseSwaggerUI();
             }
 
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

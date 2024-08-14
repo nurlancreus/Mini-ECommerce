@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories.Product;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.RequestParameters;
 
 namespace Mini_ECommerce.API.Controllers
@@ -13,10 +14,16 @@ namespace Mini_ECommerce.API.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductReadRepository _productReadRepository;
+        private readonly IProductWriteRepository _productWriteRepository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileService _fileService;
 
-        public ProductsController(IProductReadRepository productReadRepository)
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
         {
             _productReadRepository = productReadRepository;
+            _productWriteRepository = productWriteRepository;
+            _webHostEnvironment = webHostEnvironment;
+            _fileService = fileService;
         }
 
         [HttpGet]
@@ -62,5 +69,38 @@ namespace Mini_ECommerce.API.Controllers
 
             return Ok(response);
         }
+
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Upload([FromForm] IFormFileCollection files)
+        {
+            if (files == null || files.Count == 0)
+            {
+                return BadRequest("No files were provided for upload.");
+            }
+
+            try
+            {
+                var uploadResults = await _fileService.UploadAsync("resource/product-images", files);
+
+                if (uploadResults == null)
+                {
+                    return StatusCode(500, "An error occurred during the upload process.");
+                }
+
+                return Ok(new
+                {
+                    Message = "Files uploaded successfully.",
+                    Files = uploadResults
+                });
+            }
+            catch (Exception ex)
+            {
+                // Optionally log the exception
+                //_logger.LogError(ex, "File upload failed.");
+
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
+
     }
 }
