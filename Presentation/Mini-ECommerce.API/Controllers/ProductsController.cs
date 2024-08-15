@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Mini_ECommerce.Application.Abstractions.Repositories.Product;
+using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.RequestParameters;
+using Mini_ECommerce.Domain.Entities;
+using Mini_ECommerce.Domain.Enums;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -16,14 +19,26 @@ namespace Mini_ECommerce.API.Controllers
         private readonly IProductReadRepository _productReadRepository;
         private readonly IProductWriteRepository _productWriteRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly IFileService _fileService;
+        // private readonly IFileService _fileService;
+        private readonly IStorageService _storageService;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IFileService fileService)
+        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
+        private readonly IProductImageFileReadRepository _productImageFileReadRepository;
+
+        private readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
+        private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
+
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IStorageService storageService, IProductImageFileWriteRepository productImageFileWriteRepository, IProductImageFileReadRepository productImageFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-            _fileService = fileService;
+           // _fileService = fileService;
+            _storageService = storageService;
+            _productImageFileWriteRepository = productImageFileWriteRepository;
+            _productImageFileReadRepository = productImageFileReadRepository;
+            _invoiceFileWriteRepository = invoiceFileWriteRepository;
+            _invoiceFileReadRepository = invoiceFileReadRepository;
         }
 
         [HttpGet]
@@ -80,7 +95,14 @@ namespace Mini_ECommerce.API.Controllers
 
             try
             {
-                var uploadResults = await _fileService.UploadAsync("resource/product-images", files);
+                // var uploadResults = await _fileService.UploadAsync("resource/product-images", files);
+                var uploadResults = await _storageService.UploadAsync("resource/files", files);
+
+                await _productImageFileWriteRepository.AddRangeAsync(uploadResults.Select(result =>
+                     new ProductImageFile { FileName = result.fileName, Path = result.pathOrContainerName, Storage = Enum.Parse<StorageType>(_storageService.StorageName) }
+                ).ToList());
+
+                await _productImageFileWriteRepository.SaveAsync();
 
                 if (uploadResults == null)
                 {

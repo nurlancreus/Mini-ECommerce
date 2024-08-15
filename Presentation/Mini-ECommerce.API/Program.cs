@@ -2,7 +2,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Mini_ECommerce.Application.Validators.Product;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Infrastructure;
+using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local;
 using Mini_ECommerce.Infrastructure.Filters;
 using Mini_ECommerce.Persistence;
 
@@ -15,6 +17,9 @@ namespace Mini_ECommerce.API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
+            // builder.Services.AddStorage<LocalStorage>();
+            builder.Services.AddStorage(StorageType.Local);
 
             // Add services to the container.
             builder.Services.AddPersistenceServices(builder.Configuration);
