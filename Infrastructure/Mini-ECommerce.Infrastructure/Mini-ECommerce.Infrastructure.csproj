@@ -11,4 +11,8 @@
     <ProjectReference Include="..\..\Core\Mini-ECommerce.Application\Mini-ECommerce.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Concretes\Services\Storage\AWS\" />
+  </ItemGroup>
+
 </Project>

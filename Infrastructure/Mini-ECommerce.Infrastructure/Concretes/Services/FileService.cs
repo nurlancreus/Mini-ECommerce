@@ -69,7 +69,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
         {
             string oldName = Path.GetFileNameWithoutExtension(fileName);
             string extension = Path.GetExtension(fileName);
-            string newFileName = $"{NameHelpers.CharacterRegulatory(oldName)}{extension}";
+            string newFileName = $"{FileHelpers.CharacterRegulatory(oldName)}{extension}";
 
             string newFilePath = Path.Combine(path, newFileName);
 
@@ -77,7 +77,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 
             while (File.Exists(newFilePath))
             {
-                newFileName = $"{NameHelpers.CharacterRegulatory(oldName)}-{++counter}{extension}";
+                newFileName = $"{FileHelpers.CharacterRegulatory(oldName)}-{++counter}{extension}";
                 newFilePath = Path.Combine(path, newFileName);
             }
 
