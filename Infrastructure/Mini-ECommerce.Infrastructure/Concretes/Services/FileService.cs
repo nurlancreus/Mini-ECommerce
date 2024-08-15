@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Infrastructure.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,12 +33,6 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             }
         }
 
-        public Task<string> RenameFileAsync(string fileName)
-        {
-            string uniqueFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{Guid.NewGuid()}{Path.GetExtension(fileName)}";
-            return Task.FromResult(uniqueFileName);
-        }
-
         public async Task<List<(string fileName, string path)>> UploadAsync(string folderPath, IFormFileCollection formFiles)
         {
             if (formFiles.Count == 0)
@@ -47,20 +42,20 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 
             string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, folderPath);
 
-            EnsureDirectoryExists(uploadPath);
+            await EnsureDirectoryExists(uploadPath);
 
             var uploadResults = new List<(string fileName, string path)>();
 
             foreach (IFormFile formFile in formFiles)
             {
-                string newFileName = await RenameFileAsync(formFile.FileName);
+                string newFileName = await RenameFileAsync(folderPath, formFile.FileName);
                 string fullPath = Path.Combine(uploadPath, newFileName);
 
                 bool isCopied = await CopyFileAsync(fullPath, formFile);
                 if (!isCopied)
                 {
                     // Optionally, you could delete all uploaded files in case of failure.
-                    CleanupFailedUploads(uploadResults);
+                    await CleanupFailedUploads(uploadResults);
                     throw new Exception("File upload failed.");
                 }
 
@@ -70,21 +65,44 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             return uploadResults;
         }
 
-        private static void EnsureDirectoryExists(string path)
+        private async static Task<string> RenameFileAsync(string path, string fileName)
+        {
+            string oldName = Path.GetFileNameWithoutExtension(fileName);
+            string extension = Path.GetExtension(fileName);
+            string newFileName = $"{NameHelpers.CharacterRegulatory(oldName)}{extension}";
+
+            string newFilePath = Path.Combine(path, newFileName);
+
+            int counter = 1;
+
+            while (File.Exists(newFilePath))
+            {
+                newFileName = $"{NameHelpers.CharacterRegulatory(oldName)}-{++counter}{extension}";
+                newFilePath = Path.Combine(path, newFileName);
+            }
+
+            return await Task.FromResult(newFileName);
+        }
+
+        private static async Task EnsureDirectoryExists(string path)
         {
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
+                await Task.CompletedTask; // Simulating async for consistency
+
             }
         }
 
-        private static void CleanupFailedUploads(List<(string fileName, string path)> uploadedFiles)
+        private static async Task CleanupFailedUploads(List<(string fileName, string path)> uploadedFiles)
         {
             foreach (var (_, path) in uploadedFiles)
             {
                 if (File.Exists(path))
                 {
                     File.Delete(path);
+
+                    await Task.CompletedTask; // Simulating async for consistency
                 }
             }
         }
