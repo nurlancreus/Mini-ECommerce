@@ -2,10 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mini_ECommerce.Application.Abstractions.Repositories;
-using Mini_ECommerce.Application.Abstractions.Repositories;
-using Mini_ECommerce.Application.Abstractions.Repositories;
-using Mini_ECommerce.Persistence.Concretes.Repositories;
-using Mini_ECommerce.Persistence.Concretes.Repositories;
 using Mini_ECommerce.Persistence.Concretes.Repositories;
 using Mini_ECommerce.Persistence.Contexts;
 using System;

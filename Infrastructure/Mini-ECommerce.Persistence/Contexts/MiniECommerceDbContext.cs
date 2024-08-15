@@ -12,6 +12,16 @@ namespace Mini_ECommerce.Persistence.Contexts
     public class MiniECommerceDbContext(DbContextOptions<MiniECommerceDbContext> contextOptions) : DbContext(contextOptions)
     {
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+            .Entity<AppFile>()
+            .Property(p => p.Storage)
+            .HasConversion<string>();
+
+            base.OnModelCreating(modelBuilder);
+        }
+
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var changedEntities = ChangeTracker
