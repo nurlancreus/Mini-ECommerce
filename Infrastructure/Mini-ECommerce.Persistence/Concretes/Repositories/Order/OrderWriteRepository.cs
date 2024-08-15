@@ -1,4 +1,5 @@
-﻿using Mini_ECommerce.Application.Abstractions.Repositories.Order;
+﻿using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Persistence.Contexts;
 using System;
 using System.Collections.Generic;
@@ -6,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mini_ECommerce.Persistence.Concretes.Repositories.Order
+namespace Mini_ECommerce.Persistence.Concretes.Repositories
 {
-    public class OrderWriteRepository : WriteRepository<Domain.Entities.Order>, IOrderWriteRepository
+    public class OrderWriteRepository : WriteRepository<Order>, IOrderWriteRepository
     {
         public OrderWriteRepository(MiniECommerceDbContext context) : base(context)
         {
