@@ -33,12 +33,6 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             }
         }
 
-        public Task<string> RenameFileAsync(string fileName)
-        {
-            string uniqueFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{Guid.NewGuid()}{Path.GetExtension(fileName)}";
-            return Task.FromResult(uniqueFileName);
-        }
-
         public async Task<List<(string fileName, string path)>> UploadAsync(string folderPath, IFormFileCollection formFiles)
         {
             if (formFiles.Count == 0)
@@ -111,6 +105,12 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
                     await Task.CompletedTask; // Simulating async for consistency
                 }
             }
+        }
+
+        private static Task<string> GenerateUniqueFileNameAsync(string fileName)
+        {
+            string uniqueFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{Guid.NewGuid()}{Path.GetExtension(fileName)}";
+            return Task.FromResult(uniqueFileName);
         }
     }
 }
