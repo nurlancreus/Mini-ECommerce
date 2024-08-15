@@ -49,7 +49,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             foreach (IFormFile formFile in formFiles)
             {
                 string newFileName = await RenameFileAsync(folderPath, formFile.FileName);
-                string fullPath = Path.Combine(uploadPath, newFileName);
+                string fullPath = Path.Combine(folderPath, newFileName);
 
                 bool isCopied = await CopyFileAsync(fullPath, formFile);
                 if (!isCopied)
@@ -109,6 +109,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 
         private static Task<string> GenerateUniqueFileNameAsync(string fileName)
         {
+            Path.GetRandomFileName();
             string uniqueFileName = $"{Path.GetFileNameWithoutExtension(fileName)}_{Guid.NewGuid()}{Path.GetExtension(fileName)}";
             return Task.FromResult(uniqueFileName);
         }
