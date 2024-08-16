@@ -39,18 +39,23 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
             var listObjectsRequest = new ListObjectsV2Request
             {
                 BucketName = _bucketName,
-                Prefix = pathOrContainerName,
-                Delimiter = "/"
+                Prefix = pathOrContainerName.EndsWith("/") ? pathOrContainerName : $"{pathOrContainerName}/",
             };
 
             var listObjectsResponse = await _s3Client.ListObjectsV2Async(listObjectsRequest);
+
             foreach (var s3Object in listObjectsResponse.S3Objects)
             {
-                files.Add(s3Object.Key);
+                // Ensure we're only getting files and not directories
+                if (!s3Object.Key.EndsWith("/"))
+                {
+                    files.Add(s3Object.Key);
+                }
             }
 
             return files;
         }
+
 
         public async Task<bool> HasFileAsync(string pathOrContainerName, string fileName)
         {
@@ -61,7 +66,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
                 await _s3Client.GetObjectAsync(_bucketName, key);
                 return true;
             }
-            catch (AmazonS3Exception e) when (e.ErrorCode == "404" || e.ErrorCode == "403")
+            catch
             {
                 return false;
             }

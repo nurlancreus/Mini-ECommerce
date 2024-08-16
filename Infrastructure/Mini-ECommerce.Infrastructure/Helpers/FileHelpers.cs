@@ -10,7 +10,6 @@ namespace Mini_ECommerce.Infrastructure.Helpers
 {
     internal static class FileHelpers
     {
-        public delegate Task<bool> HasFileAsync (string path, string fileName);
         private static readonly Dictionary<string, string> CharacterReplacements = new()
         {
             {"\"", ""}, {"!", ""}, {"'", ""}, {"^", ""}, {"+", ""}, {"%", ""},
@@ -31,7 +30,7 @@ namespace Mini_ECommerce.Infrastructure.Helpers
             return name;
         }
 
-        public static async Task<string> RenameFileAsync(string path, string fileName, HasFileAsync hasFileAsync)
+        public static async Task<string> RenameFileAsync(string path, string fileName, Func<string, string, Task<bool>> hasFileAsync)
         {
             string oldName = Path.GetFileNameWithoutExtension(fileName);
             string extension = Path.GetExtension(fileName);

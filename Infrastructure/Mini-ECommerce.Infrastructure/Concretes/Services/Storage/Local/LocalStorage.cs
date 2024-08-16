@@ -22,7 +22,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
         {
 
             if (await HasFileAsync(path, fileName))
-                File.Delete(Path.Combine(path, fileName));
+                File.Delete(Path.Combine(_webHostEnvironment.WebRootPath, path, fileName));
 
             await Task.CompletedTask;
         }
@@ -30,7 +30,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
 
         public async Task<List<string>> GetFilesAsync(string path)
         {
-            DirectoryInfo directory = new(path);
+            DirectoryInfo directory = new(Path.Combine(_webHostEnvironment.WebRootPath, path));
             return await Task.FromResult(directory.GetFiles().Select(f => f.Name).ToList());
         }
 

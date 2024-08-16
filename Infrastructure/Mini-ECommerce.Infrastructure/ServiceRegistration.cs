@@ -24,10 +24,10 @@ namespace Mini_ECommerce.Infrastructure
             services.AddScoped<IStorageService, StorageService>();
         }
 
-        public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
-        {
-            services.AddScoped<IStorage, T>();
-        }
+        //public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
+        //{
+        //    services.AddScoped<IStorage, T>();
+        //}
 
         public static void AddStorage(this IServiceCollection services, StorageType storageType, IConfiguration configuration)
         {
@@ -58,9 +58,12 @@ namespace Mini_ECommerce.Infrastructure
             awsOptions.Credentials = new Amazon.Runtime.BasicAWSCredentials(
                 configuration["Storage:AWS:AccessKey"],
                 configuration["Storage:AWS:SecretAccessKey"]);
+            awsOptions.Region = Amazon.RegionEndpoint.GetBySystemName(configuration["Storage:AWS:Region"]); // Ensure the region is set
+
 
             services.AddDefaultAWSOptions(awsOptions);
             services.AddAWSService<IAmazonS3>();
+
             services.AddScoped<IStorage, AWSStorage>();
         }
     }
