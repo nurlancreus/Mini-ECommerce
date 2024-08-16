@@ -19,7 +19,7 @@ namespace Mini_ECommerce.API
             builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
             // builder.Services.AddStorage<LocalStorage>();
-            builder.Services.AddStorage(StorageType.Local);
+            builder.Services.AddStorage(StorageType.AWS, builder.Configuration);
 
             // Add services to the container.
             builder.Services.AddPersistenceServices(builder.Configuration);
