@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Mini_ECommerce.Domain.Enums;
+using Microsoft.Extensions.Configuration;
+using Amazon.S3;
+using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS;
 
 namespace Mini_ECommerce.Infrastructure
 {
@@ -21,27 +24,44 @@ namespace Mini_ECommerce.Infrastructure
             services.AddScoped<IStorageService, StorageService>();
         }
 
-        public static void AddStorage<T>(this IServiceCollection serviceCollection) where T : class, IStorage
+        public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
         {
-            serviceCollection.AddScoped<IStorage, T>();
+            services.AddScoped<IStorage, T>();
         }
-        public static void AddStorage(this IServiceCollection serviceCollection, StorageType storageType)
+
+        public static void AddStorage(this IServiceCollection services, StorageType storageType, IConfiguration configuration)
         {
             switch (storageType)
             {
                 case StorageType.Local:
-                    serviceCollection.AddScoped<IStorage, LocalStorage>();
+                    services.AddScoped<IStorage, LocalStorage>();
                     break;
-                case StorageType.Azure:
-                    // serviceCollection.AddScoped<IStorage, AzureStorage>();
-                    break;
-                case StorageType.AWS:
 
+                case StorageType.Azure:
+                    // Uncomment and configure for Azure Storage
+                    // services.AddScoped<IStorage, AzureStorage>();
                     break;
+
+                case StorageType.AWS:
+                    ConfigureAWSServices(services, configuration);
+                    break;
+
                 default:
-                    serviceCollection.AddScoped<IStorage, LocalStorage>();
+                    services.AddScoped<IStorage, LocalStorage>();
                     break;
             }
+        }
+
+        private static void ConfigureAWSServices(IServiceCollection services, IConfiguration configuration)
+        {
+            var awsOptions = configuration.GetAWSOptions();
+            awsOptions.Credentials = new Amazon.Runtime.BasicAWSCredentials(
+                configuration["Storage:AWS:AccessKey"],
+                configuration["Storage:AWS:SecretAccessKey"]);
+
+            services.AddDefaultAWSOptions(awsOptions);
+            services.AddAWSService<IAmazonS3>();
+            services.AddScoped<IStorage, AWSStorage>();
         }
     }
 }
