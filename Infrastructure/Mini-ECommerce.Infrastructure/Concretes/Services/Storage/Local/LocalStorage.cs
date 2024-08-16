@@ -21,21 +21,24 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
         public async Task DeleteAsync(string path, string fileName)
         {
 
-            if (HasFile(path, fileName))
+            if (await HasFileAsync(path, fileName))
                 File.Delete(Path.Combine(path, fileName));
 
             await Task.CompletedTask;
         }
 
 
-        public List<string> GetFiles(string path)
+        public async Task<List<string>> GetFilesAsync(string path)
         {
             DirectoryInfo directory = new(path);
-            return directory.GetFiles().Select(f => f.Name).ToList();
+            return await Task.FromResult(directory.GetFiles().Select(f => f.Name).ToList());
         }
 
-        public bool HasFile(string path, string fileName)
-            => File.Exists(Path.Combine(path, fileName));
+        public async Task<bool> HasFileAsync(string path, string fileName)
+        {
+            var filePath = Path.Combine(_webHostEnvironment.WebRootPath, path, fileName);
+            return await Task.FromResult(File.Exists(filePath));
+        }
 
         private static async Task<bool> CopyFileAsync(string path, IFormFile formFile)
         {
@@ -49,7 +52,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
             catch (Exception ex)
             {
                 // Log the exception details for debugging
-                throw new Exception ($"Error copying file: {ex.Message}");
+                throw new Exception($"Error copying file: {ex.Message}");
                 // return false;
             }
         }
@@ -69,7 +72,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
 
             foreach (IFormFile formFile in formFiles)
             {
-                string newFileName = await FileHelpers.RenameFileAsync(path, formFile.FileName, _webHostEnvironment.WebRootPath);
+                string newFileName = await FileHelpers.RenameFileAsync(path, formFile.FileName, HasFileAsync);
                 string fullPath = Path.Combine(uploadPath, newFileName);
 
                 bool isCopied = await CopyFileAsync(fullPath, formFile);

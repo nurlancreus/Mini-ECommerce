@@ -30,11 +30,11 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage
         public async Task DeleteAsync(string pathOrContainerName, string fileName)
             => await _storage.DeleteAsync(pathOrContainerName, fileName);
 
-        public List<string> GetFiles(string pathOrContainerName)
-            => _storage.GetFiles(pathOrContainerName);
+        public Task<List<string>> GetFilesAsync(string pathOrContainerName)
+            => _storage.GetFilesAsync(pathOrContainerName);
 
-        public bool HasFile(string pathOrContainerName, string fileName)
-            => _storage.HasFile(pathOrContainerName, fileName);
+        public Task<bool> HasFileAsync(string pathOrContainerName, string fileName)
+            => _storage.HasFileAsync(pathOrContainerName, fileName);
 
         public Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string pathOrContainerName, IFormFileCollection files)
             => _storage.UploadAsync(pathOrContainerName, files);

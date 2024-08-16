@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Abstractions.Services.Storage.Azure;
 using System;
 using System.Collections.Generic;
@@ -15,17 +16,17 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Azure
             throw new NotImplementedException();
         }
 
-        public List<string> GetFiles(string pathOrContainerName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool HasFile(string pathOrContainerName, string fileName)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string pathOrContainerName, IFormFileCollection formFiles)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<List<string>> IStorage.GetFilesAsync(string pathOrContainerName)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> IStorage.HasFileAsync(string pathOrContainerName, string fileName)
         {
             throw new NotImplementedException();
         }
