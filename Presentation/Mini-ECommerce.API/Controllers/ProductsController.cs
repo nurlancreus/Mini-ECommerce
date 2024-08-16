@@ -33,7 +33,7 @@ namespace Mini_ECommerce.API.Controllers
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
             _webHostEnvironment = webHostEnvironment;
-           // _fileService = fileService;
+            // _fileService = fileService;
             _storageService = storageService;
             _productImageFileWriteRepository = productImageFileWriteRepository;
             _productImageFileReadRepository = productImageFileReadRepository;
@@ -83,6 +83,33 @@ namespace Mini_ECommerce.API.Controllers
             };
 
             return Ok(response);
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetFiles()
+        {
+            var files = await _storageService.GetFilesAsync("resource/files");
+
+            return Ok(files);
+        }
+
+        [HttpDelete("[action]/{id}")]
+        public async Task<IActionResult> DeleteFile([FromRoute] string id)
+        {
+            var file = await _productImageFileReadRepository.GetByIdAsync(id);
+
+            if (file != null)
+            {
+                bool isDeleted = await _productImageFileWriteRepository.RemoveAsync(id);
+
+                if (isDeleted)
+                {
+                    await _productImageFileWriteRepository.SaveAsync();
+                    await _storageService.DeleteAsync("resource/files", file.FileName);
+                }
+            }
+
+            return Ok();
         }
 
         [HttpPost("[action]")]
