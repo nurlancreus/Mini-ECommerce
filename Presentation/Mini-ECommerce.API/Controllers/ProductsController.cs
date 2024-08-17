@@ -88,7 +88,7 @@ namespace Mini_ECommerce.API.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetFiles()
         {
-            var files = await _storageService.GetFilesAsync("resource/files");
+            var files = await _storageService.GetFilesAsync("files");
 
             return Ok(files);
         }
@@ -105,7 +105,7 @@ namespace Mini_ECommerce.API.Controllers
                 if (isDeleted)
                 {
                     await _productImageFileWriteRepository.SaveAsync();
-                    await _storageService.DeleteAsync("resource/files", file.FileName);
+                    await _storageService.DeleteAsync("files", file.FileName);
                 }
             }
 
@@ -113,7 +113,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload([FromForm] IFormFileCollection files)
+        public async Task<IActionResult> Upload([FromForm] IFormFileCollection files, [FromQuery] string? productId)
         {
             if (files == null || files.Count == 0)
             {
@@ -123,7 +123,7 @@ namespace Mini_ECommerce.API.Controllers
             try
             {
                 // var uploadResults = await _fileService.UploadAsync("resource/product-images", files);
-                var uploadResults = await _storageService.UploadAsync("resource/files", files);
+                var uploadResults = await _storageService.UploadAsync("files", files);
 
                 await _productImageFileWriteRepository.AddRangeAsync(uploadResults.Select(result =>
                      new ProductImageFile { FileName = result.fileName, Path = result.pathOrContainerName, Storage = Enum.Parse<StorageType>(_storageService.StorageName) }
