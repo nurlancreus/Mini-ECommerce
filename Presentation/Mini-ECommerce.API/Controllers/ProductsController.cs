@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
+using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.Features.Commands.Product.CreateProduct;
+using Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct;
 using Mini_ECommerce.Application.RequestParameters;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Enums;
@@ -28,7 +32,9 @@ namespace Mini_ECommerce.API.Controllers
         private readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
         private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IStorageService storageService, IProductImageFileWriteRepository productImageFileWriteRepository, IProductImageFileReadRepository productImageFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository)
+        private readonly IMediator _mediator;
+
+        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IStorageService storageService, IProductImageFileWriteRepository productImageFileWriteRepository, IProductImageFileReadRepository productImageFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IMediator mediator)
         {
             _productReadRepository = productReadRepository;
             _productWriteRepository = productWriteRepository;
@@ -39,50 +45,34 @@ namespace Mini_ECommerce.API.Controllers
             _productImageFileReadRepository = productImageFileReadRepository;
             _invoiceFileWriteRepository = invoiceFileWriteRepository;
             _invoiceFileReadRepository = invoiceFileReadRepository;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] Pagination paginationOptions)
+        public async Task<IActionResult> Get(GetAllProductQueryRequest getAllProductQueryRequest)
         {
-            // Fetch the queryable data source
-            var query = _productReadRepository.GetAll(false);
-
-            // Count the total items asynchronously
-            var totalItems = await query.CountAsync();
-
-            // Calculate total number of pages
-            var totalPages = (int)Math.Ceiling(totalItems / (double)paginationOptions.PageSize);
-
-            // Validate PageSize (Ensure it is positive and within a reasonable limit)
-            if (paginationOptions.PageSize <= 0 || paginationOptions.PageSize > 100)
+            try
             {
-                return BadRequest("Page size must be a positive number and cannot exceed 100.");
+                var response = await _mediator.Send(getAllProductQueryRequest);
+
+                return Ok(response);
             }
-
-            // Validate Page (Ensure it is within the valid range)
-            if (paginationOptions.Page < 1 || paginationOptions.Page > totalPages)
+            catch (InvalidPaginationException ex)
             {
-                return BadRequest($"Page number must be between 1 and {totalPages}.");
+                return BadRequest(new { Error = ex.Message, ErrorType = ex.ErrorType.ToString(), ex.InvalidValue });
             }
-
-            // Fetch the requested page of products
-            var products = await query
-                .Skip((paginationOptions.Page - 1) * paginationOptions.PageSize)
-                .Take(paginationOptions.PageSize)
-                .Select(p => new { p.Id, p.Name, p.Price, p.Stock, p.CreatedAt })
-                .ToListAsync();
-
-            // Create a response with pagination metadata
-            var response = new
+            catch (Exception ex)
             {
-                TotalItems = totalItems,
-                paginationOptions.Page,
-                paginationOptions.PageSize,
-                TotalPages = totalPages,
-                Items = products
-            };
+                return StatusCode(500, new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
+        }
 
-            return Ok(response);
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateProductCommandRequest createProductCommandRequest)
+        {
+            var response = await _mediator.Send(createProductCommandRequest);
+
+            return StatusCode((int)response.StatusCode, response.Message);
         }
 
         [HttpGet("[action]")]
