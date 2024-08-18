@@ -13,5 +13,6 @@ namespace Mini_ECommerce.Application.ViewModels.Product
         public int Stock { get; set; }
         public float Price { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }
