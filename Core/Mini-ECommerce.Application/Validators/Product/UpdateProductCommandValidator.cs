@@ -1,4 +1,7 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Features.Commands.Product.UpdateProduct;
 using Mini_ECommerce.Application.ViewModels.Product;
 using System;
 using System.Collections.Generic;
@@ -8,10 +11,13 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Validators.Product
 {
-    public class CreateProductValidator : AbstractValidator<CreateProductVM>
+    public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommandRequest>
     {
-        public CreateProductValidator()
+        private readonly IProductReadRepository _productReadRepository;
+        public UpdateProductCommandValidator(IProductReadRepository productReadRepository)
         {
+            _productReadRepository = productReadRepository;
+
             RuleFor(p => p.Name)
                 .NotEmpty()
                     .WithMessage("Please do not leave the product name empty.")
@@ -20,7 +26,13 @@ namespace Mini_ECommerce.Application.Validators.Product
                 .Length(5, 150)
                     .WithMessage("The product name must be between 5 and 150 characters.")
                 .Matches(@"^[a-zA-Z0-9\s]*$")
-                    .WithMessage("The product name can only contain letters, numbers, and spaces.");
+            .WithMessage("The product name can only contain letters, numbers, and spaces.")
+            .MustAsync(async (name, cancellation) =>
+            {
+                bool isExist = await _productReadRepository.Table.AnyAsync(product => product.Name == name);
+
+                return !isExist;
+            }).WithMessage("Name must be unique");
 
             RuleFor(p => p.Stock)
                 .NotNull()
