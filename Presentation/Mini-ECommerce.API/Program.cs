@@ -1,6 +1,7 @@
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Mini_ECommerce.Application;
 using Mini_ECommerce.Application.Validators.Product;
 using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Infrastructure;
@@ -21,6 +22,7 @@ namespace Mini_ECommerce.API
             builder.Services.AddStorage(StorageType.AWS, builder.Configuration);
 
             // Add services to the container.
+            builder.Services.AddApplicationServices();
             builder.Services.AddPersistenceServices(builder.Configuration);
             builder.Services.AddInfrastructureServices();
 
@@ -30,9 +32,10 @@ namespace Mini_ECommerce.API
 
             //builder.Services.AddFluentValidation(configuration => configuration.RegisterValidatorsFromAssemblyContaining<CreateProductValidator>());
 
-            builder.Services.AddFluentValidationAutoValidation().AddFluentValidationClientsideAdapters();
+            builder.Services//AddFluentValidationAutoValidation()
+                .AddFluentValidationClientsideAdapters();
 
-            builder.Services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+            builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
 
             builder.Services.AddAuthentication();  // Add the specific authentication scheme you are using
             builder.Services.AddAuthorization();

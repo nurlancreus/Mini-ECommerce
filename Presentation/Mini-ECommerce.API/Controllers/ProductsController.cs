@@ -7,10 +7,13 @@ using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Features.Commands.Product.CreateProduct;
+using Mini_ECommerce.Application.Features.Commands.Product.UpdateProduct;
 using Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct;
+using Mini_ECommerce.Application.Features.Queries.Product.GetProductById;
 using Mini_ECommerce.Application.RequestParameters;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Enums;
+using System.Net;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -49,7 +52,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(GetAllProductQueryRequest getAllProductQueryRequest)
+        public async Task<IActionResult> GetAll(GetAllProductQueryRequest getAllProductQueryRequest)
         {
             try
             {
@@ -63,16 +66,61 @@ namespace Mini_ECommerce.API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { Error = "An unexpected error occurred.", Details = ex.Message });
+                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
+        }
+
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> Get(GetProductByIdQueryRequest getProductByIdQueryRequest)
+        {
+            try
+            {
+                var response = await _mediator.Send(getProductByIdQueryRequest);
+
+                return Ok(response);
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { Error = ex.Message, Entity = ex.EntityName });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
             }
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductCommandRequest createProductCommandRequest)
         {
-            var response = await _mediator.Send(createProductCommandRequest);
+            try
+            {
+                await _mediator.Send(createProductCommandRequest);
 
-            return StatusCode((int)response.StatusCode, response.Message);
+                return Created();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest( new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update(UpdateProductCommandRequest updateProductCommandRequest)
+        {
+            try
+            {
+                await _mediator.Send(updateProductCommandRequest);
+
+                return Created();
+            }
+            catch (EntityNotFoundException ex)
+            {
+                return NotFound(new { Error = ex.Message, Entity = ex.EntityName });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest( new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
         }
 
         [HttpGet("[action]")]
