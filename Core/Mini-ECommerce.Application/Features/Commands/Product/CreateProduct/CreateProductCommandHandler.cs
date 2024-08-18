@@ -20,11 +20,17 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.CreateProduct
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            await _productWriteRepository.AddAsync(new() { Name = request.Name, Price = request.Price, Stock = request.Stock });
+            bool isAdded = await _productWriteRepository.AddAsync(new() { Name = request.Name, Price = request.Price, Stock = request.Stock });
+
+            if (!isAdded)
+            {
+                throw new Exception("Cannot add Product");
+            }
 
             await _productWriteRepository.SaveAsync();
 
-            var response = new CreateProductCommandResponse() { StatusCode = HttpStatusCode.Created, Message = "Product Created Successfully!" };
+
+            var response = new CreateProductCommandResponse() { Message = "Product Created Successfully!", };
 
             return response;
         }
