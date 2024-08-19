@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mini_ECommerce.Application.Exceptions.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Mini_ECommerce.Application.Exceptions
         InvalidPageNumber
     }
 
-    public class InvalidPaginationException : Exception
+    public class InvalidPaginationException : BaseException
     {
         public PaginationErrorType ErrorType { get; }
         public int InvalidValue { get; }

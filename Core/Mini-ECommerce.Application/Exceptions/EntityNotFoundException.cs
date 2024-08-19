@@ -1,12 +1,14 @@
-﻿using System;
+﻿using Mini_ECommerce.Application.Exceptions.Base;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Exceptions
 {
-    public class EntityNotFoundException : Exception
+    public class EntityNotFoundException : BaseException
     {
         public string EntityName { get; }
 
@@ -17,13 +19,13 @@ namespace Mini_ECommerce.Application.Exceptions
         }
 
         public EntityNotFoundException(string entityName, string customMessage)
-            : base(customMessage)
+            : base(HttpStatusCode.NotFound,customMessage)
         {
             EntityName = entityName;
         }
 
         public EntityNotFoundException(string entityName, int entityId)
-            : base($"The entity '{entityName}' with ID '{entityId}' was not found.")
+            : base(HttpStatusCode.NotFound, $"The entity '{entityName}' with ID '{entityId}' was not found.")
         {
             EntityName = entityName;
         }
