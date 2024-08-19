@@ -6,8 +6,11 @@ using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.Exceptions.Base;
 using Mini_ECommerce.Application.Features.Commands.Product.CreateProduct;
+using Mini_ECommerce.Application.Features.Commands.Product.RemoveProduct;
 using Mini_ECommerce.Application.Features.Commands.Product.UpdateProduct;
+using Mini_ECommerce.Application.Features.Commands.ProductImageFile.UploadProductImage;
 using Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct;
 using Mini_ECommerce.Application.Features.Queries.Product.GetProductById;
 using Mini_ECommerce.Application.RequestParameters;
@@ -100,7 +103,7 @@ namespace Mini_ECommerce.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest( new { Error = "An unexpected error occurred.", Details = ex.Message });
+                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
             }
         }
 
@@ -119,7 +122,22 @@ namespace Mini_ECommerce.API.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest( new { Error = "An unexpected error occurred.", Details = ex.Message });
+                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
+            }
+        }
+
+        public async Task<IActionResult> Delete(RemoveProductCommandRequest removeProductCommandRequest)
+        {
+            try
+            {
+                var response = await _mediator.Send(removeProductCommandRequest);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"An error occurred: {ex.Message}");
+
             }
         }
 
@@ -151,41 +169,24 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPost("[action]")]
-        public async Task<IActionResult> Upload([FromForm] IFormFileCollection files, [FromQuery] string? productId)
+        public async Task<IActionResult> Upload(UploadProductImageCommandRequest uploadProductImageCommandRequest)
         {
-            if (files == null || files.Count == 0)
-            {
-                return BadRequest("No files were provided for upload.");
-            }
-
             try
             {
-                // var uploadResults = await _fileService.UploadAsync("resource/product-images", files);
-                var uploadResults = await _storageService.UploadAsync("files", files);
+                var response = await _mediator.Send(uploadProductImageCommandRequest);
 
-                await _productImageFileWriteRepository.AddRangeAsync(uploadResults.Select(result =>
-                     new ProductImageFile { FileName = result.fileName, Path = result.pathOrContainerName, Storage = Enum.Parse<StorageType>(_storageService.StorageName) }
-                ).ToList());
-
-                await _productImageFileWriteRepository.SaveAsync();
-
-                if (uploadResults == null)
-                {
-                    return StatusCode(500, "An error occurred during the upload process.");
-                }
-
-                return Ok(new
-                {
-                    Message = "Files uploaded successfully.",
-                    Files = uploadResults
-                });
+                return Ok(response);
+            }
+            catch (BaseException ex)
+            {
+                return StatusCode((int)ex.StatusCode, new { Error = ex.StatusCode, Details = ex.Message });
             }
             catch (Exception ex)
             {
                 // Optionally log the exception
                 //_logger.LogError(ex, "File upload failed.");
 
-                return StatusCode(500, $"An error occurred: {ex.Message}");
+                return BadRequest($"An error occurred: {ex.Message}");
             }
         }
 
