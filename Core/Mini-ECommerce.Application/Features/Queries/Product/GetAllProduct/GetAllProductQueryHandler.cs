@@ -47,7 +47,7 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
             // Fetch the requested page of products
             var products = await query
                 .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+                .Take(request.PageSize).Include(p => p.Orders).ThenInclude(o => o.Customer)
                 .Select(p => new GetProductVM
                 {
                     Id = p.Id,
