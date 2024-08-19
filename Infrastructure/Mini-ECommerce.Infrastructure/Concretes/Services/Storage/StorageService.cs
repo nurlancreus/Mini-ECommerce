@@ -27,6 +27,10 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage
             }
         }
 
+        public async Task DeleteAllAsync(string pathOrContainerName)
+          => await _storage.DeleteAllAsync(pathOrContainerName);
+
+
         public async Task DeleteAsync(string pathOrContainerName, string fileName)
             => await _storage.DeleteAsync(pathOrContainerName, fileName);
 
