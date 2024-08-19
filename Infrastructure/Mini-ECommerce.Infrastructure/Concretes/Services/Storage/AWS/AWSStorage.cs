@@ -33,6 +33,37 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
             await _s3Client.DeleteObjectAsync(deleteObjectRequest);
         }
 
+        public async Task DeleteAllAsync(string pathOrContainerName)
+        {
+            var prefix = pathOrContainerName.Replace("\\", "/") + "/";
+
+            var listObjectsRequest = new ListObjectsV2Request
+            {
+                BucketName = _bucketName,
+                Prefix = prefix
+            };
+
+            ListObjectsV2Response listObjectsResponse;
+            do
+            {
+                listObjectsResponse = await _s3Client.ListObjectsV2Async(listObjectsRequest);
+
+                foreach (var s3Object in listObjectsResponse.S3Objects)
+                {
+                    var deleteObjectRequest = new DeleteObjectRequest
+                    {
+                        BucketName = _bucketName,
+                        Key = s3Object.Key
+                    };
+
+                    await _s3Client.DeleteObjectAsync(deleteObjectRequest);
+                }
+
+                listObjectsRequest.ContinuationToken = listObjectsResponse.NextContinuationToken;
+
+            } while (listObjectsResponse.IsTruncated); // Continue if there are more files to delete.
+        }
+
         public async Task<List<string>> GetFilesAsync(string pathOrContainerName)
         {
             var files = new List<string>();

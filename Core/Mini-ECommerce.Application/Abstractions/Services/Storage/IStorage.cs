@@ -11,6 +11,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Storage
     {
         Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string pathOrContainerName, IFormFileCollection formFiles);
         Task DeleteAsync(string pathOrContainerName, string fileName);
+        Task DeleteAllAsync(string pathOrContainerName);
         Task<List<string>> GetFilesAsync(string pathOrContainerName);
         Task<bool> HasFileAsync(string pathOrContainerName, string fileName);
     }

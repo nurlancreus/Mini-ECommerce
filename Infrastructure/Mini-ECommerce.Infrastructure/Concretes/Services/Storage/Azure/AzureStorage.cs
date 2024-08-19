@@ -21,6 +21,11 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Azure
             throw new NotImplementedException();
         }
 
+        Task IStorage.DeleteAllAsync(string pathOrContainerName)
+        {
+            throw new NotImplementedException();
+        }
+
         Task<List<string>> IStorage.GetFilesAsync(string containerName)
         {
             throw new NotImplementedException();

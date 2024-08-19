@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Abstractions.Services.Storage.Local;
 using Mini_ECommerce.Infrastructure.Helpers;
 using System;
@@ -89,5 +90,9 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
             return uploadResults;
         }
 
+        Task IStorage.DeleteAllAsync(string pathOrContainerName)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
