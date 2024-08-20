@@ -13,6 +13,8 @@ using Mini_ECommerce.Domain.Enums;
 using Microsoft.Extensions.Configuration;
 using Amazon.S3;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS;
+using Mini_ECommerce.Application.Abstractions.Services.Token;
+using Mini_ECommerce.Infrastructure.Concretes.Services.Token;
 
 namespace Mini_ECommerce.Infrastructure
 {
@@ -22,6 +24,7 @@ namespace Mini_ECommerce.Infrastructure
         {
             // services.AddScoped<IFileService, FileService>();
             services.AddScoped<IStorageService, StorageService>();
+            services.AddScoped<IAppTokenHandler, AppTokenHandler>();
         }
 
         //public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
