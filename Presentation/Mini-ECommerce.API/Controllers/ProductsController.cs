@@ -126,6 +126,7 @@ namespace Mini_ECommerce.API.Controllers
             }
         }
 
+        [HttpDelete]
         public async Task<IActionResult> Delete(RemoveProductCommandRequest removeProductCommandRequest)
         {
             try
