@@ -21,9 +21,9 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser
         public async Task<RegisterUserCommandResponse> Handle(RegisterUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var result = await _userManager.CreateAsync(new () { FirstName = request.FirstName, LastName = request.LastName, UserName = request.UserName, Email = request.Email }, request.Password);
+            var result = await _userManager.CreateAsync(new() { FirstName = request.FirstName, LastName = request.LastName, UserName = request.UserName, Email = request.Email }, request.Password);
 
-            if(!result.Succeeded)
+            if (!result.Succeeded)
             {
                 string message = string.Empty;
 
@@ -35,7 +35,11 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser
                 throw new RegistrationException(message);
             }
 
-            return new RegisterUserCommandResponse() { Message = "User created successfully"};
+            return new RegisterUserCommandResponse()
+            {
+                Success = true,
+                Message = "User created successfully"
+            };
         }
     }
 }

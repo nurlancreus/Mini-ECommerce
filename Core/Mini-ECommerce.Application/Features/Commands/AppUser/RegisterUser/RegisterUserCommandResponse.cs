@@ -9,6 +9,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser
 {
     public class RegisterUserCommandResponse : IRequest<RegisterUserCommandRequest>
     {
+        public bool Success { get; set; }
         public string? Message {  get; set; } 
     }
 }
