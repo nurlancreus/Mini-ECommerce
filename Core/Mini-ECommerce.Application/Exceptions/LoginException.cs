@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Exceptions
 {
-    public class RegistrationException : BaseException
+    public class LoginException : BaseException
     {
-        public RegistrationException() : base(HttpStatusCode.BadRequest, "Cannot register user.")
+        public LoginException() : base(HttpStatusCode.BadRequest, "Cannot log in user.")
         {
-            
+
         }
-        
-        public RegistrationException(string message) : base(HttpStatusCode.BadRequest, message)
+
+        public LoginException(string message) : base(HttpStatusCode.BadRequest, message)
         {
-            
+
         }
     }
 }
