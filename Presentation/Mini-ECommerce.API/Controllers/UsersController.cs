@@ -18,7 +18,7 @@ namespace Mini_ECommerce.API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserCommandRequest registerUserCommandRequest)
         {
             try
@@ -36,7 +36,7 @@ namespace Mini_ECommerce.API.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("login")]
         public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
         {
             try
