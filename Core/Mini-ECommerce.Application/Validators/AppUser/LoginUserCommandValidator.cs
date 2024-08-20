@@ -15,7 +15,7 @@ namespace Mini_ECommerce.Application.Validators.AppUser
             RuleFor(u => u.Email)
                 .NotEmpty().WithMessage("Username or Email is required.")
                 .NotNull().WithMessage("Username or Email cannot be null.")
-                .EmailAddress().WithMessage("Please enter a valid email address or username.");
+                .EmailAddress().WithMessage("Please enter a valid email address.");
             
             RuleFor(u => u.Password)
                 .NotEmpty().WithMessage("Password is required.")
