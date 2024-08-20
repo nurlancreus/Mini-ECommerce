@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Entities.Base;
+using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Persistence.Contexts
 {
-    public class MiniECommerceDbContext(DbContextOptions<MiniECommerceDbContext> contextOptions) : DbContext(contextOptions)
+    public class MiniECommerceDbContext(DbContextOptions<MiniECommerceDbContext> contextOptions) : IdentityDbContext<AppUser, AppRole, string>(contextOptions)
     {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
