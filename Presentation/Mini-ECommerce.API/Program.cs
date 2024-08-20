@@ -1,6 +1,8 @@
 
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Mini_ECommerce.Application;
 using Mini_ECommerce.Application.Validators.Product;
 using Mini_ECommerce.Domain.Enums;
@@ -8,6 +10,8 @@ using Mini_ECommerce.Infrastructure;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local;
 using Mini_ECommerce.Infrastructure.Filters;
 using Mini_ECommerce.Persistence;
+using System.Security.Claims;
+using System.Text;
 
 namespace Mini_ECommerce.API
 {
@@ -37,7 +41,25 @@ namespace Mini_ECommerce.API
 
             builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
 
-            builder.Services.AddAuthentication();  // Add the specific authentication scheme you are using
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer("Admin", options =>
+    {
+        options.TokenValidationParameters = new()
+        {
+            ValidateAudience = true, // Specifies which origins/sites can use the generated token value. -> www.somesite.com
+            ValidateIssuer = true, // Specifies who issued the generated token value. -> www.myapi.com
+            ValidateIssuerSigningKey = true, // Validation of the security key, confirming that the generated token value belongs to our application.
+            ValidateLifetime = true, // Validation that checks the expiration time of the generated token value.
+
+            ValidAudience = builder.Configuration["Token:Audience"],
+            ValidIssuer = builder.Configuration["Token:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null && expires > DateTime.UtcNow,
+
+            NameClaimType = ClaimTypes.Name // The value corresponding to the Name claim in the JWT can be obtained from the User.Identity.Name property.
+        };
+    });
+
             builder.Services.AddAuthorization();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
