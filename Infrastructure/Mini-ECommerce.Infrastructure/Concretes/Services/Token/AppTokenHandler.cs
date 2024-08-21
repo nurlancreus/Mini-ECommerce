@@ -50,7 +50,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             token.AccessToken = tokenHandler.WriteToken(securityToken);
 
             // Generate the refresh token.
-            token.RefreshToken = CreateRefreshToken();
+            // token.RefreshToken = CreateRefreshToken();
 
             return token;
         }
