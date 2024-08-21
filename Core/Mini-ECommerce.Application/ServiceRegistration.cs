@@ -24,6 +24,8 @@ namespace Mini_ECommerce.Application
 
             // Register MediatR pipeline behavior for FluentValidation
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+            services.AddHttpClient();
         }
     }
 }
