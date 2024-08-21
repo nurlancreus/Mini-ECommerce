@@ -59,7 +59,11 @@ namespace Mini_ECommerce.API
 
             NameClaimType = ClaimTypes.Name // The value corresponding to the Name claim in the JWT can be obtained from the User.Identity.Name property.
         };
-    });
+    }).AddGoogle(options =>
+    {
+        options.ClientId = builder.Configuration["ExternalLoginSettings:Google:ClientId"];
+        options.ClientSecret = builder.Configuration["ExternalLoginSettings:Google:ClientSecret"];
+    }); ;
 
             builder.Services.AddAuthorization();
 
@@ -79,21 +83,55 @@ namespace Mini_ECommerce.API
                     Scheme = "Bearer"
                 });
 
-                // Apply the BearerAuth scheme to all API endpoints
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
-            {
-                new OpenApiSecurityScheme
+                // Define the Google Auth scheme
+                c.AddSecurityDefinition("Google", new OpenApiSecurityScheme
                 {
-                    Reference = new OpenApiReference
+                    Description = "Google OAuth2.0",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
                     {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/auth"),
+                            TokenUrl = new Uri("https://oauth2.googleapis.com/token"),
+                            Scopes = new Dictionary<string, string>
+                {
+                    { "openid", "Access to your Google account" },
+                    { "profile", "Access to your Google profile" },
+                    { "email", "Access to your email" }
+                }
+                        }
                     }
-                },
-                Array.Empty<string>()
-            }
-        });
+                });
+
+                // Apply the BearerAuth and GoogleAuth schemes to all API endpoints
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        },
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Google"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
             });
 
             var app = builder.Build();
@@ -102,7 +140,12 @@ namespace Mini_ECommerce.API
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API v1");
+                    c.OAuthClientId(builder.Configuration["Authentication:Google:ClientId"]);
+                    c.OAuthClientSecret(builder.Configuration["Authentication:Google:ClientSecret"]);
+                });
             }
 
             app.UseStaticFiles();
