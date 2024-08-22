@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -11,34 +12,29 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser
 {
     public class RegisterUserCommandHandler : IRequestHandler<RegisterUserCommandRequest, RegisterUserCommandResponse>
     {
-        private readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
-
-        public RegisterUserCommandHandler(UserManager<Domain.Entities.Identity.AppUser> userManager)
+        private readonly IUserService _userService;
+        public RegisterUserCommandHandler(IUserService userService)
         {
-            _userManager = userManager;
+            _userService = userService;
         }
 
         public async Task<RegisterUserCommandResponse> Handle(RegisterUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var result = await _userManager.CreateAsync(new() { FirstName = request.FirstName, LastName = request.LastName, UserName = request.UserName, Email = request.Email }, request.Password);
-
-            if (!result.Succeeded)
+            var response = await _userService.RegisterUserAsync(new()
             {
-                string message = string.Empty;
-
-                foreach (var error in result.Errors)
-                {
-                    message += $"{error.Code} - {error.Description}\n";
-                }
-
-                throw new RegistrationException(message);
-            }
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                UserName = request.UserName,
+                Password = request.Password,
+                ConfirmPassword = request.ConfirmPassword,
+            });
 
             return new RegisterUserCommandResponse()
             {
-                Success = true,
-                Message = "User created successfully"
+                Message = response.Message,
+                Success = response.Success,
             };
         }
     }
