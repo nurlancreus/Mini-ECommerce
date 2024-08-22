@@ -37,59 +37,5 @@ namespace Mini_ECommerce.API.Controllers
                 return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
             }
         }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginUserCommandRequest loginUserCommandRequest)
-        {
-            try
-            {
-                var response = await _mediator.Send(loginUserCommandRequest);
-                return Ok(response);
-            }
-            catch (LoginException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
-            }
-        }
-
-        [HttpPost("login-google")]
-        public async Task<IActionResult> GoogleLogin(GoogleLoginUserCommandRequest googleLoginUserCommandRequest)
-        {
-            try
-            {
-                var response = await _mediator.Send(googleLoginUserCommandRequest);
-                return Ok(response);
-            }
-            catch (LoginException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
-            }
-        }
-        
-        [HttpPost("login-facebook")]
-        public async Task<IActionResult> FacebookLogin(FacebookLoginUserCommandRequest facebookLoginUserCommandRequest)
-        {
-            try
-            {
-                var response = await _mediator.Send(facebookLoginUserCommandRequest);
-                return Ok(response);
-            }
-            catch (LoginException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
-            }
-        }
     }
 }
