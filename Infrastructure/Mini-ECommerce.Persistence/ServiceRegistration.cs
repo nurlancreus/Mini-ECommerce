@@ -3,8 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.Abstractions.Services.Auth;
 using Mini_ECommerce.Domain.Entities.Identity;
 using Mini_ECommerce.Persistence.Concretes.Repositories;
+using Mini_ECommerce.Persistence.Concretes.Services;
+using Mini_ECommerce.Persistence.Concretes.Services.Auth;
 using Mini_ECommerce.Persistence.Contexts;
 using System;
 using System.Collections.Generic;
@@ -40,6 +44,10 @@ namespace Mini_ECommerce.Persistence
 
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
+
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IExternalAuthService, ExternalAuthService>();
+            services.AddScoped<IInternalAuthService, InternalAuthService>();
 
             services.AddIdentity<AppUser, AppRole>()
                     .AddEntityFrameworkStores<MiniECommerceDbContext>()
