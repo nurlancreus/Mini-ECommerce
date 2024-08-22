@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Mini_ECommerce.Application.Abstractions.Services.Auth;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.Exceptions;
 using System.Threading;
@@ -9,32 +10,27 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, LoginUserCommandResponse>
     {
-        private readonly SignInManager<Domain.Entities.Identity.AppUser> _signInManager;
-        private readonly UserManager<Domain.Entities.Identity.AppUser> _userManager;
-        private readonly IAppTokenHandler _tokenHandler;
 
-        public LoginUserCommandHandler(SignInManager<Domain.Entities.Identity.AppUser> signInManager, UserManager<Domain.Entities.Identity.AppUser> userManager, IAppTokenHandler tokenHandler)
+        private readonly IInternalAuthService _internalAuthService;
+
+        public LoginUserCommandHandler(IInternalAuthService internalAuthService)
         {
-            _signInManager = signInManager;
-            _userManager = userManager;
-            _tokenHandler = tokenHandler;
+            _internalAuthService = internalAuthService;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email)
-                        ?? throw new LoginException("Invalid login attempt.");
-
-            var signInResult = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, request.RememberMe, lockoutOnFailure: false);
-
-            if (!signInResult.Succeeded)
+            var response = await _internalAuthService.LoginAsync(new()
             {
-                throw new LoginException("Invalid login attempt.");
-            }
+                Email = request.Email,
+                Password = request.Password,
+                RememberMe = request.RememberMe,
+            }, 10000);
 
             return new LoginUserSuccessCommandResponse
             {
-                Token = _tokenHandler.CreateAccessToken(5000, user)
+                Token = response.Token,
+                Message = response.Message,
             };
         }
     }

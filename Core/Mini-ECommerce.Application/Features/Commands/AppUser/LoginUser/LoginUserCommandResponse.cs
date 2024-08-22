@@ -16,6 +16,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser
     public class LoginUserSuccessCommandResponse : LoginUserCommandResponse
     {
         public TokenDTO Token { get; set; }
+        public string? Message { get; set; }
     }
     public class LoginUserErrorCommandResponse : LoginUserCommandResponse
     {
