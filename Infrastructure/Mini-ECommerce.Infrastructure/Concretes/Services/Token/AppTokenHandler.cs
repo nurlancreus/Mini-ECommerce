@@ -22,11 +22,11 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             _configuration = configuration;
         }
 
-        public TokenDTO CreateAccessToken(int seconds, AppUser appUser)
+        public TokenDTO CreateAccessToken(int accessTokenLifeTime, AppUser appUser)
         {
             TokenDTO token = new()
             {
-                ExpirationDate = DateTime.UtcNow.AddSeconds(seconds),
+                ExpirationDate = DateTime.UtcNow.AddMilliseconds(accessTokenLifeTime),
             };
 
             // Get the symmetric security key.

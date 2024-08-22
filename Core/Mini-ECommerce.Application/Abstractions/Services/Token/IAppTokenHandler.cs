@@ -10,7 +10,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Token
 {
     public interface IAppTokenHandler
     {
-        TokenDTO CreateAccessToken(int second, AppUser appUser);
+        TokenDTO CreateAccessToken(int accessTokenLifeTime, AppUser appUser);
         string CreateRefreshToken();
     }
 }
