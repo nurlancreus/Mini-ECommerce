@@ -26,6 +26,7 @@ namespace Mini_ECommerce.API.Controllers
             try
             {
                 var response = await _mediator.Send(registerUserCommandRequest);
+
                 return Ok(response);
             }
             catch (RegistrationException ex)

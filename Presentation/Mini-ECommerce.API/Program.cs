@@ -63,7 +63,7 @@ namespace Mini_ECommerce.API
     {
         options.ClientId = builder.Configuration["ExternalLoginSettings:Google:ClientId"];
         options.ClientSecret = builder.Configuration["ExternalLoginSettings:Google:ClientSecret"];
-    }); ;
+    });
 
             builder.Services.AddAuthorization();
 
