@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -50,14 +51,19 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             token.AccessToken = tokenHandler.WriteToken(securityToken);
 
             // Generate the refresh token.
-            // token.RefreshToken = CreateRefreshToken();
+            token.RefreshToken = CreateRefreshToken();
 
             return token;
         }
 
         public string CreateRefreshToken()
         {
-            throw new NotImplementedException();
+            byte[] number = new byte[32];
+
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
+            random.GetBytes(number);
+
+            return Convert.ToBase64String(number);
         }
     }
 }
