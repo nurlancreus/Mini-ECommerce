@@ -35,6 +35,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser
             {
                 Message = response.Message,
                 Success = response.Success,
+                Token = response.Token
             };
         }
     }
