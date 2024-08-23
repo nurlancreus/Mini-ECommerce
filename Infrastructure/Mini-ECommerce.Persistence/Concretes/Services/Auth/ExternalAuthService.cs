@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Auth;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.FacebookAccess;
@@ -25,15 +26,17 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly HttpClient _httpClient;
+        private readonly IUserService _userService;
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
 
-        public ExternalAuthService(UserManager<AppUser> userManager, IHttpClientFactory httpClientFactory, IAppTokenHandler tokenHandler, IConfiguration configuration)
+        public ExternalAuthService(UserManager<AppUser> userManager, IHttpClientFactory httpClientFactory, IAppTokenHandler tokenHandler, IConfiguration configuration, IUserService userService)
         {
             _userManager = userManager;
             _httpClient = httpClientFactory.CreateClient();
             _tokenHandler = tokenHandler;
             _configuration = configuration;
+            _userService = userService;
         }
 
         public async Task<TokenDTO> FacebookLoginAsync(string authToken, string provider, int accessTokenLifeTime)
@@ -128,6 +131,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
             await _userManager.AddLoginAsync(user, info); //AspNetUserLogins
 
             TokenDTO token = _tokenHandler.CreateAccessToken(accessTokenLifeTime, user);
+
+            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate, 15); // (minutes)
 
             return token;
         }
