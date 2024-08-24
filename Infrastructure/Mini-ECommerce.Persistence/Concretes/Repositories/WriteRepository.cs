@@ -47,7 +47,13 @@ namespace Mini_ECommerce.Persistence.Concretes.Repositories
         }
         public async Task<bool> RemoveAsync(string id)
         {
-            T? entity = await Table.FirstOrDefaultAsync(e => e.Id == Guid.Parse(id));
+            // FIX
+            T? entity = null;
+
+            if(Guid.TryParse(id, out Guid result))
+            {
+                entity = await Table.FirstOrDefaultAsync(e => e.Id == result);
+            }
 
             return Remove(entity);
         }

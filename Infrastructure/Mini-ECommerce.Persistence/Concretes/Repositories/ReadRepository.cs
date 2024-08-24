@@ -54,7 +54,13 @@ namespace Mini_ECommerce.Persistence.Concretes.Repositories
             if (!tracking)
                 query = Table.AsNoTracking();
 
-            return await query.FirstOrDefaultAsync(e => e.Id == Guid.Parse(id));
+            if (Guid.TryParse(id, out var result))
+            {
+
+                return await query.FirstOrDefaultAsync(e => e.Id == result);
+            }
+
+            return null;
         }
     }
 }
