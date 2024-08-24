@@ -2,6 +2,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Mini_ECommerce.Application;
@@ -11,8 +12,15 @@ using Mini_ECommerce.Infrastructure;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local;
 using Mini_ECommerce.Infrastructure.Filters;
 using Mini_ECommerce.Persistence;
+using NpgsqlTypes;
+using Serilog.Sinks.PostgreSQL;
+using Serilog;
 using System.Security.Claims;
 using System.Text;
+using Serilog.Core;
+using Mini_ECommerce.API.Configurations;
+using Serilog.Context;
+using Mini_ECommerce.API.Middlewares;
 
 namespace Mini_ECommerce.API
 {
@@ -22,14 +30,17 @@ namespace Mini_ECommerce.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Apply the logging configuration
+            builder.ConfigureLogging();
+
             builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
             builder.Services.AddStorage(StorageType.AWS, builder.Configuration);
 
             // Add services to the container.
-            builder.Services.AddApplicationServices();
-            builder.Services.AddPersistenceServices(builder.Configuration);
-            builder.Services.AddInfrastructureServices();
+            builder.Services.AddApplicationServices()
+                .AddPersistenceServices(builder.Configuration)
+                .AddInfrastructureServices();
 
             builder.Services.AddControllers();
 
@@ -42,28 +53,11 @@ namespace Mini_ECommerce.API
 
             builder.Services.AddValidatorsFromAssemblyContaining<CreateProductCommandValidator>();
 
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer("Admin", options =>
-    {
-        options.TokenValidationParameters = new()
-        {
-            ValidateAudience = true, // Specifies which origins/sites can use the generated token value. -> www.somesite.com
-            ValidateIssuer = true, // Specifies who issued the generated token value. -> www.myapi.com
-            ValidateIssuerSigningKey = true, // Validation of the security key, confirming that the generated token value belongs to our application.
-            ValidateLifetime = true, // Validation that checks the expiration time of the generated token value.
-
-            ValidAudience = builder.Configuration["Token:Audience"],
-            ValidIssuer = builder.Configuration["Token:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-            LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null && expires > DateTime.UtcNow,
-
-            NameClaimType = ClaimTypes.Name // The value corresponding to the Name claim in the JWT can be obtained from the User.Identity.Name property.
-        };
-    }).AddGoogle(options =>
-    {
-        options.ClientId = builder.Configuration["ExternalLoginSettings:Google:ClientId"];
-        options.ClientSecret = builder.Configuration["ExternalLoginSettings:Google:ClientSecret"];
-    });
+            builder.ConfigureAuth().AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["ExternalLoginSettings:Google:ClientId"];
+                options.ClientSecret = builder.Configuration["ExternalLoginSettings:Google:ClientSecret"];
+            });
 
             builder.Services.AddAuthorization();
 
@@ -148,12 +142,21 @@ namespace Mini_ECommerce.API
                 });
             }
 
+            // should put above everything you want to log (only logs the things coming after itself)
+            app.UseSerilogRequestLogging();
+
             app.UseStaticFiles();
+
+            // for http logging
+            app.UseHttpLogging();
+
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // should put after UseAuth* middlewares
+            app.UseMyLoggingMiddleware();
 
             app.MapControllers();
 
