@@ -14,7 +14,7 @@ namespace Mini_ECommerce.Application
 {
     public static class ServiceRegistration
     {
-        public static void AddApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services)
         {
             services.AddMediatR(config => {
                 config.RegisterServicesFromAssembly(typeof(ServiceRegistration).Assembly);
@@ -26,6 +26,8 @@ namespace Mini_ECommerce.Application
             // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             services.AddHttpClient();
+
+            return services;
         }
     }
 }

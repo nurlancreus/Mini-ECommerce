@@ -21,7 +21,7 @@ namespace Mini_ECommerce.Persistence
 {
     public static class ServiceRegistration
     {
-        public static void AddPersistenceServices (this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPersistenceServices (this IServiceCollection services, IConfiguration configuration)
         {
             //services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
            
@@ -73,6 +73,8 @@ namespace Mini_ECommerce.Persistence
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = true;
             });
+
+            return services;
         }
     }
 }

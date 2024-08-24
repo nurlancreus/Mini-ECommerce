@@ -20,11 +20,13 @@ namespace Mini_ECommerce.Infrastructure
 {
     public static class ServiceRegistration
     {
-        public static void AddInfrastructureServices(this IServiceCollection services)
+        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
             // services.AddScoped<IFileService, FileService>();
             services.AddScoped<IStorageService, StorageService>();
             services.AddScoped<IAppTokenHandler, AppTokenHandler>();
+
+            return services;
         }
 
         //public static void AddStorage<T>(this IServiceCollection services) where T : class, IStorage
