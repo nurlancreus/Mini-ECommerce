@@ -28,6 +28,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Infrastructure\Mini-ECommerce.Infrastructure\Mini-ECommerce.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\Mini-ECommerce.Persistence\Mini-ECommerce.Persistence.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Mini-ECommerce.SignalR\Mini-ECommerce.SignalR.csproj" />
   </ItemGroup>
 
   <ItemGroup>

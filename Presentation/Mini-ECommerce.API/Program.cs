@@ -21,6 +21,7 @@ using Serilog.Core;
 using Mini_ECommerce.API.Configurations;
 using Serilog.Context;
 using Mini_ECommerce.API.Middlewares;
+using Mini_ECommerce.SignalR;
 
 namespace Mini_ECommerce.API
 {
@@ -29,6 +30,13 @@ namespace Mini_ECommerce.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+            policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+            ));
 
             // Apply the logging configuration
             builder.ConfigureLogging();
@@ -40,7 +48,8 @@ namespace Mini_ECommerce.API
             // Add services to the container.
             builder.Services.AddApplicationServices()
                 .AddPersistenceServices(builder.Configuration)
-                .AddInfrastructureServices();
+                .AddInfrastructureServices()
+                .AddSignalRServices();
 
             builder.Services.AddControllers();
 
@@ -63,70 +72,9 @@ namespace Mini_ECommerce.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
 
-                // Define the BearerAuth scheme
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-
-                // Define the Google Auth scheme
-                c.AddSecurityDefinition("Google", new OpenApiSecurityScheme
-                {
-                    Description = "Google OAuth2.0",
-                    Name = "Authorization",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
-                    {
-                        AuthorizationCode = new OpenApiOAuthFlow
-                        {
-                            AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/auth"),
-                            TokenUrl = new Uri("https://oauth2.googleapis.com/token"),
-                            Scopes = new Dictionary<string, string>
-                {
-                    { "openid", "Access to your Google account" },
-                    { "profile", "Access to your Google profile" },
-                    { "email", "Access to your email" }
-                }
-                        }
-                    }
-                });
-
-                // Apply the BearerAuth and GoogleAuth schemes to all API endpoints
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        },
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Google"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-            });
+            // Configure Swagger
+            builder.ConfigureSwagger();
 
             var app = builder.Build();
 
@@ -151,7 +99,7 @@ namespace Mini_ECommerce.API
 
             // for http logging
             app.UseHttpLogging();
-
+            app.UseCors();
             app.UseHttpsRedirection();
 
             app.UseAuthentication();
@@ -161,6 +109,9 @@ namespace Mini_ECommerce.API
             app.UseMyLoggingMiddleware();
 
             app.MapControllers();
+
+            // maps signalR hubs
+            app.MapHubs();
 
             app.Run();
         }
