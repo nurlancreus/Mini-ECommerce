@@ -55,7 +55,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll(GetAllProductQueryRequest getAllProductQueryRequest)
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
             try
             {
