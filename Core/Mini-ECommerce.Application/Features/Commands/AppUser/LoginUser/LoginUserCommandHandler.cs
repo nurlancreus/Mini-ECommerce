@@ -25,7 +25,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser
                 Email = request.Email,
                 Password = request.Password,
                 RememberMe = request.RememberMe,
-            }, 10000);
+            });
 
             return new LoginUserSuccessCommandResponse
             {

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.User;
@@ -19,12 +20,14 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppTokenHandler _tokenHandler;
+        private readonly IConfiguration _configuration;
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenHandler = tokenHandler;
+            _configuration = configuration;
         }
 
         public async Task<RegisterUserResponseDTO> RegisterUserAsync(RegisterUserRequestDTO userRequestDTO)
@@ -47,8 +50,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
 
             await _signInManager.SignInAsync(user, isPersistent: false);
 
-            var token = _tokenHandler.CreateAccessToken(10000, user);
-            await UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate, 15); // (minutes)
+            var token = _tokenHandler.CreateAccessToken(user);
+            await UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate);
 
             return new RegisterUserResponseDTO()
             {
@@ -58,12 +61,14 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             };
         }
 
-        public async Task UpdateRefreshTokenAsync(string refreshToken, AppUser user, DateTime accessTokenLifeTime, int addOnAccessTokenLifeTime)
+        public async Task UpdateRefreshTokenAsync(string refreshToken, AppUser user, DateTime accessTokenLifeTime)
         {
             if (user != null)
             {
+                double refreshTokenLifeTime = Convert.ToDouble(_configuration["Token:RefreshTokenLifeTimeInMinutes"]);
+
                 user.RefreshToken = refreshToken;
-                user.RefreshTokenEndDate = accessTokenLifeTime.AddMinutes(addOnAccessTokenLifeTime);
+                user.RefreshTokenEndDate = accessTokenLifeTime.AddMinutes(refreshTokenLifeTime);
 
                 await _userManager.UpdateAsync(user);
             }

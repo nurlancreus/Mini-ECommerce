@@ -39,7 +39,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
             _userService = userService;
         }
 
-        public async Task<TokenDTO> FacebookLoginAsync(string authToken, string provider, int accessTokenLifeTime)
+        public async Task<TokenDTO> FacebookLoginAsync(string authToken, string provider)
         {
             string accessTokenResponse = await _httpClient.GetStringAsync($"https://graph.facebook.com/oauth/access_token?client_id={_configuration["ExternalLoginSettings:Facebook:AppId"]}&client_secret={_configuration["ExternalLoginSettings:Facebook:AppId"]}&grant_type=client_credentials");
 
@@ -68,12 +68,12 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
                 UserName = facebookUserInfo.Email,
                 UserInfo = info,
                 
-            }, accessTokenLifeTime);
+            });
 
             return token;
         }
 
-        public async Task<TokenDTO> GoogleLoginAsync(string idToken, string provider, int accessTokenLifeTime)
+        public async Task<TokenDTO> GoogleLoginAsync(string idToken, string provider)
         {
             var settings = new GoogleJsonWebSignature.ValidationSettings()
             {
@@ -91,12 +91,12 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
                 Email = payload.Email,
                 UserName = payload.Email,
                 UserInfo = info,
-            }, accessTokenLifeTime);
+            });
 
             return token;
         }
 
-        private async Task<TokenDTO> RegisterExternalUserAsync(RegisterExternalUserDTO registerExternalUserDTO, int accessTokenLifeTime)
+        private async Task<TokenDTO> RegisterExternalUserAsync(RegisterExternalUserDTO registerExternalUserDTO)
         {
             var info = registerExternalUserDTO.UserInfo;
 
@@ -130,9 +130,9 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
 
             await _userManager.AddLoginAsync(user, info); //AspNetUserLogins
 
-            TokenDTO token = _tokenHandler.CreateAccessToken(accessTokenLifeTime, user);
+            TokenDTO token = _tokenHandler.CreateAccessToken(user);
 
-            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate, 15); // (minutes)
+            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate);
 
             return token;
         }

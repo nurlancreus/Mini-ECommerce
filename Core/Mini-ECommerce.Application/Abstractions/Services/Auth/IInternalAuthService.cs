@@ -10,7 +10,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
     public interface IInternalAuthService : IAuthService
     {
-        Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO, int accessTokenLifeTime);
-        Task<TokenDTO> RefreshTokenLoginAsync(string refreshToken);
+        Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO);
+        Task<TokenDTO> RefreshTokenLoginAsync(string accessToken, string refreshToken);
     }
 }

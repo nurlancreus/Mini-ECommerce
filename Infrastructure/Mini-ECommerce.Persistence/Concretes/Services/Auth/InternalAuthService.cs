@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -32,7 +33,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
             _userService = userService;
         }
 
-        public async Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO, int accessTokenLifeTime)
+        public async Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO)
         {
             var user = await _userManager.FindByEmailAsync(loginUserRequestDTO.Email)
             ?? throw new LoginException("Invalid login attempt.");
@@ -43,8 +44,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
                 throw new LoginException("Invalid login attempt.");
             }
 
-            var token = _tokenHandler.CreateAccessToken(accessTokenLifeTime, user);
-            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate, 15); // (minutes)
+            var token = _tokenHandler.CreateAccessToken(user);
+            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate);
 
             return new()
             {
@@ -53,18 +54,37 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
             };
         }
 
-        public async Task<TokenDTO> RefreshTokenLoginAsync(string refreshToken)
+        public async Task<TokenDTO> RefreshTokenLoginAsync(string accessToken, string refreshToken)
         {
-            AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
 
-            if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+            ClaimsPrincipal? principal = _tokenHandler.GetPrincipalFromAccessToken(accessToken) ?? throw new Exception("Invalid jwt access token");
+
+            string? name = principal.FindFirstValue(ClaimTypes.Name);
+
+            AppUser? user = await _userManager.FindByNameAsync(name);
+
+            if (user == null || user.RefreshToken != refreshToken || user.RefreshTokenEndDate <= DateTime.UtcNow)
             {
-                var token = _tokenHandler.CreateAccessToken(10000, user);
-                await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate, 15);
-                return token;
+                throw new Exception("Invalid refresh token");
             }
-            else
-                throw new EntityNotFoundException(nameof(user));
+
+            var token = _tokenHandler.CreateAccessToken(user);
+
+            await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate); 
+
+            return token;
+
+
+            /* AppUser? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+
+             if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+             {
+                 var token = _tokenHandler.CreateAccessToken(user);
+                 await _userService.UpdateRefreshTokenAsync(token.RefreshToken, user, token.ExpirationDate);
+                 return token;
+             }
+             else
+                 throw new EntityNotFoundException(nameof(user)); */
         }
     }
 }

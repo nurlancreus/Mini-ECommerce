@@ -13,7 +13,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
     public interface IExternalAuthService : IAuthService
     {
-        Task<TokenDTO> GoogleLoginAsync(string idToken, string provider, int accessTokenLifeTime);
-        Task<TokenDTO> FacebookLoginAsync(string authToken, string provider, int accessTokenLifeTime);
+        Task<TokenDTO> GoogleLoginAsync(string idToken, string provider);
+        Task<TokenDTO> FacebookLoginAsync(string authToken, string provider);
     }
 }

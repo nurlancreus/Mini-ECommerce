@@ -23,11 +23,13 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             _configuration = configuration;
         }
 
-        public TokenDTO CreateAccessToken(int accessTokenLifeTime, AppUser appUser)
+        public TokenDTO CreateAccessToken(AppUser appUser)
         {
+            double tokenLifeTime = Convert.ToDouble(_configuration["Token:AccessTokenLifeTimeInMinutes"]);
+
             TokenDTO token = new()
             {
-                ExpirationDate = DateTime.UtcNow.AddMilliseconds(accessTokenLifeTime),
+                ExpirationDate = DateTime.UtcNow.AddMinutes(tokenLifeTime),
             };
 
             // Get the symmetric security key.
@@ -58,12 +60,39 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
 
         public string CreateRefreshToken()
         {
-            byte[] number = new byte[32];
+            byte[] number = new byte[64];
 
             using RandomNumberGenerator random = RandomNumberGenerator.Create();
             random.GetBytes(number);
 
             return Convert.ToBase64String(number);
+        }
+
+        public ClaimsPrincipal? GetPrincipalFromAccessToken(string? accessToken)
+        {
+            var tokenValidationParameters = new TokenValidationParameters()
+            {
+                ValidateAudience = true,
+                ValidAudience = _configuration["Token:Audience"],
+                ValidateIssuer = true,
+                ValidIssuer = _configuration["Token:Issuer"],
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"])),
+
+                ValidateLifetime = false //should be false
+            };
+
+            JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
+
+            ClaimsPrincipal principal = jwtSecurityTokenHandler.ValidateToken(accessToken, tokenValidationParameters, out SecurityToken securityToken);
+
+            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new SecurityTokenException("Invalid token");
+            }
+
+            return principal;
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RefreshTokenLogin
 
         public async Task<RefreshTokenLoginCommandResponse> Handle(RefreshTokenLoginCommandRequest request, CancellationToken cancellationToken)
         {
-            TokenDTO token = await _internalAuthService.RefreshTokenLoginAsync(request.RefreshToken);
+            TokenDTO token = await _internalAuthService.RefreshTokenLoginAsync(request.AccessToken, request.RefreshToken);
 
             return new()
             {
