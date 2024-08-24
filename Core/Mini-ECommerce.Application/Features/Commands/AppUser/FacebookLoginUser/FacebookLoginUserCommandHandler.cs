@@ -29,7 +29,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.FacebookLoginUser
         public async Task<FacebookLoginUserCommandResponse> Handle(FacebookLoginUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var token = await _externalAuthService.FacebookLoginAsync(request.AuthToken, ExternalLoginProvider.Facebook.ToString());
+            var token = await _externalAuthService.FacebookLoginAsync(request.AuthToken, nameof(ExternalLoginProvider.Facebook));
 
             return new FacebookLoginUserCommandResponse()
             {

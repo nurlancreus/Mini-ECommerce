@@ -26,7 +26,7 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.GoogleLoginUser
         public async Task<GoogleLoginUserCommandResponse> Handle(GoogleLoginUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var token = await _externalAuthService.GoogleLoginAsync(request.IdToken, ExternalLoginProvider.Google.ToString());
+            var token = await _externalAuthService.GoogleLoginAsync(request.IdToken, nameof(ExternalLoginProvider));
 
             return new GoogleLoginUserCommandResponse()
             {
