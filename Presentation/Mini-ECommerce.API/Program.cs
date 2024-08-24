@@ -142,6 +142,8 @@ namespace Mini_ECommerce.API
                 });
             }
 
+            app.ConfigureExceptionHandler(app.Services.GetRequiredService<ILogger<Program>>());
+
             // should put above everything you want to log (only logs the things coming after itself)
             app.UseSerilogRequestLogging();
 

@@ -23,20 +23,10 @@ namespace Mini_ECommerce.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserCommandRequest registerUserCommandRequest)
         {
-            try
-            {
-                var response = await _mediator.Send(registerUserCommandRequest);
+            var response = await _mediator.Send(registerUserCommandRequest);
 
-                return Ok(response);
-            }
-            catch (RegistrationException ex)
-            {
-                return StatusCode((int)ex.StatusCode, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
-            }
+            return Ok(response);
+
         }
     }
 }
