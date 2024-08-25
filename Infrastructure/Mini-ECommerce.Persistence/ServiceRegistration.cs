@@ -39,6 +39,12 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IAppFileReadRepository, AppFileReadRepository>();
             services.AddScoped<IAppFileWriteRepository, AppFileWriteRepository>();
 
+            services.AddScoped<IBasketReadRepository, BasketReadRepository>();
+            services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
+            
+            services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
+            services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
+
             services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
 
@@ -48,6 +54,8 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IExternalAuthService, ExternalAuthService>();
             services.AddScoped<IInternalAuthService, InternalAuthService>();
+
+            services.AddScoped<IBasketService, BasketService>();
 
             services.AddIdentity<AppUser, AppRole>()
                     .AddEntityFrameworkStores<MiniECommerceDbContext>()
