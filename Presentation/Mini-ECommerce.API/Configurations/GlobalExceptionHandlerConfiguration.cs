@@ -23,6 +23,7 @@ namespace Mini_ECommerce.API.Configurations
                         var exception = contextFeature.Error;
                         HttpStatusCode statusCode;
                         string message;
+                        string track = string.Empty;
 
                         if (exception is BaseException baseException)
                         {
@@ -37,7 +38,8 @@ namespace Mini_ECommerce.API.Configurations
                         else
                         {
                             statusCode = HttpStatusCode.InternalServerError;
-                            message = "An unexpected error occurred."; // Generic error message for other exceptions
+                            message = exception.Message; // Generic error message for other exceptions
+                            track = exception.StackTrace ?? "";
                         }
 
                         // Log the error
@@ -46,10 +48,12 @@ namespace Mini_ECommerce.API.Configurations
                         context.Response.StatusCode = (int)statusCode; // Set the response status code
                         var response = new
                         {
-                            StatusCode = context.Response.StatusCode,
+                            context.Response.StatusCode,
                             Message = message,
-                            Title = "Exception caught!"
+                            Title = "Exception caught!",
+                            track,
                         };
+
 
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
                     }
