@@ -17,5 +17,6 @@ namespace Mini_ECommerce.Domain.Entities
 
         [NotMapped]
         public override DateTime? UpdatedAt => null;
+
     }
 }
