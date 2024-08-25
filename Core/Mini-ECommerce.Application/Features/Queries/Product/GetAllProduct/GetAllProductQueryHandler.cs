@@ -47,7 +47,11 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
             // Fetch the requested page of products
             var products = await query
                 .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize).Include(p => p.Orders).ThenInclude(o => o.Customer)
+                .Take(request.PageSize)
+                .Include(p => p.Orders)
+                .ThenInclude(o => o.Customer)
+                .Include(p => p.ProductProductImageFiles)
+                .ThenInclude(p => p.ProductImageFile)
                 .Select(p => new GetProductVM
                 {
                     Id = p.Id,
@@ -66,6 +70,14 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
                             Id = o.Customer.Id,
                             Name = o.Customer.Name,
                         }
+                    }).ToList(),
+                    ProductImageFiles = p.ProductProductImageFiles.Select(image => new ViewModels.ProductImageFile.GetProductImageFileVM
+                    {
+                        IsMain = image.IsMain,
+                        FileName = image.ProductImageFile.FileName,
+                        Id = image.ProductImageFile.Id,
+                        Path = image.ProductImageFile.Path,
+                        CreatedAt = image.ProductImageFile.CreatedAt
                     }).ToList()
                 })
                 .ToListAsync(cancellationToken: cancellationToken);
