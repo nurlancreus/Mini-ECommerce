@@ -46,6 +46,24 @@ namespace Mini_ECommerce.Persistence.Contexts
            .Property(p => p.IsMain)
            .HasDefaultValue(false);
 
+
+            modelBuilder.Entity<Order>()
+                .HasKey(b => b.Id);
+
+            modelBuilder.Entity<Order>()
+                .HasIndex(o => o.OrderCode)
+                .IsUnique();
+
+            modelBuilder.Entity<Basket>()
+                .HasOne(b => b.Order)
+                .WithOne(o => o.Basket)
+                .HasForeignKey<Order>(o => o.Id);
+
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.CompletedOrder)
+                .WithOne(c => c.Order)
+                .HasForeignKey<CompletedOrder>(c => c.OrderId);
+
             base.OnModelCreating(modelBuilder);
         }
 
@@ -75,8 +93,11 @@ namespace Mini_ECommerce.Persistence.Contexts
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<AppFile> ApplicationFiles { get; set; }
+        public DbSet<InvoiceFile> InvoiceFiles { get; set; }
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
         public DbSet<ProductProductImageFile> ProductProductImageFiles { get; set; }
-        public DbSet<InvoiceFile> InvoiceFiles { get; set; }
+        public DbSet<Basket> Baskets { get; set; }
+        public DbSet<BasketItem> BasketItems { get; set; }
+        public DbSet<CompletedOrder> CompletedOrders { get; set; }
     }
 }
