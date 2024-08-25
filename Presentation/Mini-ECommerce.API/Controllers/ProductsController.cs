@@ -57,7 +57,6 @@ namespace Mini_ECommerce.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
-
             var response = await _mediator.Send(getAllProductQueryRequest);
 
             return Ok(response);
@@ -70,7 +69,6 @@ namespace Mini_ECommerce.API.Controllers
             var response = await _mediator.Send(getProductByIdQueryRequest);
 
             return Ok(response);
-
         }
 
         [HttpPost]
@@ -79,7 +77,6 @@ namespace Mini_ECommerce.API.Controllers
             await _mediator.Send(createProductCommandRequest);
 
             return Created();
-
         }
 
         [HttpPut]
@@ -129,24 +126,9 @@ namespace Mini_ECommerce.API.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Upload(UploadProductImageCommandRequest uploadProductImageCommandRequest)
         {
-            try
-            {
-                var response = await _mediator.Send(uploadProductImageCommandRequest);
+            var response = await _mediator.Send(uploadProductImageCommandRequest);
 
-                return Ok(response);
-            }
-            catch (BaseException ex)
-            {
-                return StatusCode((int)ex.StatusCode, new { Error = ex.StatusCode, Details = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                // Optionally log the exception
-                //_logger.LogError(ex, "File upload failed.");
-
-                return BadRequest($"An error occurred: {ex.Message}");
-            }
+            return Ok(response);
         }
-
     }
 }
