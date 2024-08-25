@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Entities.Base;
 using Mini_ECommerce.Domain.Entities.Identity;
@@ -18,8 +19,32 @@ namespace Mini_ECommerce.Persistence.Contexts
         {
             modelBuilder
             .Entity<AppFile>()
-            .Property(p => p.Storage)
+          .Property(p => p.Storage)
             .HasConversion<string>();
+
+            //     modelBuilder.Entity<Product>()
+            //.HasMany(e => e.ProductImageFiles)
+            // .WithMany(e => e.Products);
+
+
+            
+            modelBuilder.Entity<Product>()
+          .HasMany(p => p.ProductImageFiles)
+          .WithMany(pi => pi.Products)
+          .UsingEntity<ProductProductImageFile>(
+            j => j
+          .HasOne(pp => pp.ProductImageFile)
+          .WithMany(pi => pi.ProductProductImageFiles)
+          .HasForeignKey(pp => pp.ProductImageFileId),
+            j => j
+          .HasOne(pp => pp.Product)
+          .WithMany(p => p.ProductProductImageFiles)
+          .HasForeignKey(pp => pp.ProductId)
+            );
+
+            modelBuilder.Entity<ProductProductImageFile>()
+           .Property(p => p.IsMain)
+           .HasDefaultValue(false);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -51,6 +76,7 @@ namespace Mini_ECommerce.Persistence.Contexts
         public DbSet<Order> Orders { get; set; }
         public DbSet<AppFile> ApplicationFiles { get; set; }
         public DbSet<ProductImageFile> ProductImageFiles { get; set; }
+        public DbSet<ProductProductImageFile> ProductProductImageFiles { get; set; }
         public DbSet<InvoiceFile> InvoiceFiles { get; set; }
     }
 }
