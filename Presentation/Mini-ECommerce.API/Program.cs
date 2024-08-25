@@ -38,6 +38,9 @@ namespace Mini_ECommerce.API
             .AllowCredentials()
             ));
 
+            builder.Services.AddHttpContextAccessor(); // A service that allows us to access the HttpContext object created as a result of the client's request through the classes in the layers (business logic).
+
+
             // Apply the logging configuration
             builder.ConfigureLogging();
 
