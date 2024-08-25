@@ -14,5 +14,7 @@ namespace Mini_ECommerce.Domain.Entities
         public float Price { get; set; }
         public ICollection<Order> Orders { get; set; } = [];
         public ICollection<ProductImageFile> ProductImageFiles { get; set; } = [];
+        public ICollection<ProductProductImageFile> ProductProductImageFiles { get; set; } = [];
+
     }
 }

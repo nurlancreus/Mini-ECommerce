@@ -9,6 +9,7 @@ namespace Mini_ECommerce.Domain.Entities
     // TPH
     public class ProductImageFile : AppFile
     {
-        public ICollection<Product> Products { get; set; }
+        public ICollection<ProductProductImageFile> ProductProductImageFiles { get; set; } = [];
+        public ICollection<Product> Products { get; set; } = [];
     }
 }
