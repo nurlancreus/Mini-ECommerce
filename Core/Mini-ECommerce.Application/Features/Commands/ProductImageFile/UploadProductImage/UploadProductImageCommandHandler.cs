@@ -2,6 +2,7 @@
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.ViewModels.ProductImageFile;
 using Mini_ECommerce.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -40,29 +41,48 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.UploadPr
 
             var uploadResults = await _storageService.UploadAsync("product-images", request.Files);
 
-            var productImages = uploadResults.Select(result => new Domain.Entities.ProductImageFile
+            try
             {
-                FileName = result.fileName,
-                Path = result.pathOrContainerName,
-                Storage = Enum.Parse<StorageType>(_storageService.StorageName),
-                Products = [product]
-            }).ToList();
 
-            var isAdded = await _productImageFileWriteRepository.AddRangeAsync(productImages);
+                int counter = 0;
 
-            if (isAdded)
+                var productImages = uploadResults.Select(result =>
+                {
+
+                    counter++;
+
+                    return new Domain.Entities.ProductImageFile
+                    {
+                        //IsMain = counter == 1,
+                        FileName = result.fileName,
+                        Path = result.pathOrContainerName,
+                        Storage = Enum.Parse<StorageType>(_storageService.StorageName),
+                        Products = [product]
+                    };
+                }).ToList();
+
+                var isAdded = await _productImageFileWriteRepository.AddRangeAsync(productImages);
+
+                if (!isAdded)
+                {
+                    await _storageService.DeleteAllAsync("product-images");
+
+                    throw new Exception("Could not save files in the database, Something happened");
+                }
+
+                await _productImageFileWriteRepository.SaveAsync();
+
+                return new UploadProductImageCommandResponse()
+                {
+                    Message = $"{(request.Files.Count > 1 ? "Files" : "File")} added successfully!",
+                };
+            }
+            catch
             {
-                await _storageService.DeleteAllAsync("product-images");
-
-                throw new Exception("Could not save files in the database, Something happened");
+                // remove added product from bucket
+                throw;
             }
 
-            await _productImageFileWriteRepository.SaveAsync();
-
-            return new UploadProductImageCommandResponse()
-            {
-                Message = $"{(request.Files.Count > 1 ? "Files" : "File")} added successfully!"
-            };
 
         }
     }

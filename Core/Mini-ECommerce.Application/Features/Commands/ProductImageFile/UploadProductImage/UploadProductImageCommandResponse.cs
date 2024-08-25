@@ -10,6 +10,5 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.UploadPr
     public class UploadProductImageCommandResponse : IRequest<UploadProductImageCommandRequest>
     {
         public string? Message { get; set; }
-        ICollection<Domain.Entities.ProductImageFile> ProductImages { get; set; }
     }
 }
