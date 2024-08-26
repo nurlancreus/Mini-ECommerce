@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.SignalR.Constants
 {
-    public static class FunctionNames
+    public static class ReceiveFunctionNames
     {
         public const string ProductAddedMessage = "receiveProductAddedMessage";
+        public const string OrderAddedMessage = "receiveOrderAddedMessage";
     }
 }
