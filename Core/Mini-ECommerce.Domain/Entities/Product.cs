@@ -12,7 +12,8 @@ namespace Mini_ECommerce.Domain.Entities
         public string Name { get; set; } = "";
         public int Stock { get; set; }
         public float Price { get; set; }
-        public ICollection<Order> Orders { get; set; } = [];
+        // public ICollection<Order> Orders { get; set; } = [];
+        // we could get orders through basketitems and baskets
         public ICollection<ProductImageFile> ProductImageFiles { get; set; } = [];
         public ICollection<ProductProductImageFile> ProductProductImageFiles { get; set; } = [];
         public ICollection<BasketItem> BasketItems { get; set; } = [];
