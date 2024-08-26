@@ -14,6 +14,6 @@ namespace Mini_ECommerce.Application.Abstractions.Services
         public Task AddItemToBasketAsync(CreateBasketItemDTO basketItem);
         public Task UpdateQuantityAsync(UpdateBasketItemDTO basketItem);
         public Task RemoveBasketItemAsync(string basketItemId);
-        public Basket? GetUserActiveBasket { get; }
+        public Basket? UserActiveBasket { get; }
     }
 }
