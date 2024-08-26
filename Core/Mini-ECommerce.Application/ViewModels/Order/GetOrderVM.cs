@@ -1,4 +1,5 @@
-﻿using Mini_ECommerce.Application.ViewModels.Customer;
+﻿using Mini_ECommerce.Application.ViewModels.Address;
+using Mini_ECommerce.Application.ViewModels.Customer;
 using Mini_ECommerce.Application.ViewModels.Product;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,8 @@ namespace Mini_ECommerce.Application.ViewModels.Order
     {
         public Guid Id { get; set; }
         public string Description { get; set; }
-        public string Address { get; set; }
+        public GetAddressVM Address { get; set; }
         public string OrderCode { get; set; }
         public GetCustomerVM Customer { get; set; }
-        public ICollection<GetProductVM> Products { get; set; } = [];
     }
 }
