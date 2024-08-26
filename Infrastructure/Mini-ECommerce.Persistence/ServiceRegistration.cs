@@ -56,6 +56,7 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IInternalAuthService, InternalAuthService>();
 
             services.AddScoped<IBasketService, BasketService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.AddIdentity<AppUser, AppRole>()
                     .AddEntityFrameworkStores<MiniECommerceDbContext>()
