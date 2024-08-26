@@ -29,7 +29,7 @@ namespace Mini_ECommerce.Application.Validators.Product
             .WithMessage("The product name can only contain letters, numbers, and spaces.")
             .MustAsync(async (name, cancellation) =>
             {
-                bool isExist = await _productReadRepository.Table.AnyAsync(product => product.Name == name);
+                bool isExist = await _productReadRepository.Table.AnyAsync(product => product.Name == name, cancellationToken: cancellation);
 
                 return !isExist;
             }).WithMessage("Name must be unique");
