@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
 using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Application.ViewModels.Product;
@@ -48,8 +49,6 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
             var products = await query
                 .Skip((request.Page - 1) * request.PageSize)
                 .Take(request.PageSize)
-                .Include(p => p.Orders)
-                .ThenInclude(o => o.Customer)
                 .Include(p => p.ProductProductImageFiles)
                 .ThenInclude(p => p.ProductImageFile)
                 .Select(p => new GetProductVM
@@ -59,18 +58,6 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
                     Price = p.Price,
                     Stock = p.Stock,
                     CreatedAt = p.CreatedAt,
-                    Orders = p.Orders.Select(o => new GetOrderVM
-                    {
-                        Id = o.Id,
-                        Address = o.Address,
-                        Description = o.Description,
-                        OrderCode = o.OrderCode,
-                        Customer = new GetCustomerVM
-                        {
-                            Id = o.Customer.Id,
-                            Name = o.Customer.Name,
-                        }
-                    }).ToList(),
                     ProductImageFiles = p.ProductProductImageFiles.Select(image => new ViewModels.ProductImageFile.GetProductImageFileVM
                     {
                         IsMain = image.IsMain,

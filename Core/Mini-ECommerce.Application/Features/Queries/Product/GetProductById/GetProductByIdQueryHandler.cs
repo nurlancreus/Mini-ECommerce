@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
 using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Application.ViewModels.Product;
@@ -33,11 +34,14 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
             }
 
             // Explicitly load related entities
+
+            /*
             await _productReadRepository.Table.Entry(product).Collection(p => p.Orders).LoadAsync(cancellationToken);
             foreach (var order in product.Orders)
             {
                 await _orderReadRepository.Table.Entry(order).Reference(o => o.Customer).LoadAsync(cancellationToken);
             }
+            */
 
             // Map the product and its related entities to the response view model
             var response = new GetProductByIdQueryResponse()
@@ -50,18 +54,6 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
                     Stock = product.Stock,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt,
-                    Orders = product.Orders.Select(o => new GetOrderVM
-                    {
-                        Id = o.Id,
-                        Address = o.Address,
-                        Description = o.Description,
-                        OrderCode = o.OrderCode,
-                        Customer = new GetCustomerVM
-                        {
-                            Id = o.Customer.Id,
-                            Name = o.Customer.Name,
-                        }
-                    }).ToList()
                 }
             };
 
