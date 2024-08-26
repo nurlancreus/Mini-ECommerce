@@ -10,11 +10,11 @@ namespace Mini_ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BasketItemsController : ControllerBase
+    public class BasketsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public BasketItemsController(IMediator mediator)
+        public BasketsController(IMediator mediator)
         {
             _mediator = mediator;
         }
