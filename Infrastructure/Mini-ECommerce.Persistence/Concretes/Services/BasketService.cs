@@ -34,7 +34,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             _basketReadRepository = basketReadRepository;
         }
 
-        public Basket? GetUserActiveBasket => GetTargetBasket().Result;
+        public Basket? UserActiveBasket => GetTargetBasket().Result;
 
         public async Task AddItemToBasketAsync(CreateBasketItemDTO basketItem)
         {
@@ -43,7 +43,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 throw new ArgumentNullException(nameof(basketItem), "Basket item cannot be null.");
 
             if (string.IsNullOrEmpty(basketItem.ProductId))
-                throw new ArgumentException("Product ID cannot be null or empty.", nameof(basketItem.ProductId));
+                throw new ArgumentException("Product ID cannot be null or empty.", nameof(basketItem));
 
             if (basketItem.Quantity <= 0)
                 throw new ArgumentException("Quantity must be greater than zero.", nameof(basketItem));
