@@ -11,6 +11,9 @@ namespace Mini_ECommerce.Application.Features.Queries.Order.GetAllOrders
 {
     public class GetAllOrdersQueryResponse : IRequest<GetAllOrdersQueryRequest>
     {
+        public int TotalOrderCount { get; set; }
+        public int TotalPagesCount { get; set; }
+        public int CurrentPage { get; set; }
         public List<GetOrderVM> Orders { get; set; } = [];
 
     }
