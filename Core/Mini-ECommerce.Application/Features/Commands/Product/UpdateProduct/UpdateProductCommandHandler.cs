@@ -35,7 +35,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.UpdateProduct
 
             await _productWriteRepository.SaveAsync();
 
-            var response = new UpdateProductCommandResponse() { Product = new() { Id = product.Id, Name = product.Name, Price = product.Price, Stock = product.Stock, CreatedAt = product.CreatedAt, UpdatedAt = product.UpdatedAt } };
+            var response = new UpdateProductCommandResponse() { Product = new() { Id = product.Id.ToString(), Name = product.Name, Price = product.Price, Stock = product.Stock, CreatedAt = product.CreatedAt, UpdatedAt = product.UpdatedAt } };
 
             return response;
         }

@@ -17,7 +17,6 @@ namespace Mini_ECommerce.Application.Features.Commands.Order.CreateOrder
         private readonly IBasketService _basketService;
         private readonly IOrderHubService _orderHubService;
 
-
         public CreateOrderCommandHandler(IOrderService orderService, IBasketService basketService, IOrderHubService orderHubService)
         {
             _orderService = orderService;
@@ -27,7 +26,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Order.CreateOrder
 
         public async Task<CreateOrderCommandResponse> Handle(CreateOrderCommandRequest request, CancellationToken cancellationToken)
         {
-            string? basketId = Convert.ToString(_basketService?.UserActiveBasket?.Id)?.ToString();
+            string? basketId = _basketService?.UserActiveBasket?.Id;
 
             await _orderService.CreateOrderAsync(new CreateOrderDTO()
             {
