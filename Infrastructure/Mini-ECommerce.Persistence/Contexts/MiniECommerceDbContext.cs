@@ -27,7 +27,7 @@ namespace Mini_ECommerce.Persistence.Contexts
             // .WithMany(e => e.Products);
 
 
-            
+
             modelBuilder.Entity<Product>()
           .HasMany(p => p.ProductImageFiles)
           .WithMany(pi => pi.Products)
@@ -58,6 +58,11 @@ namespace Mini_ECommerce.Persistence.Contexts
                 .HasOne(b => b.Order)
                 .WithOne(o => o.Basket)
                 .HasForeignKey<Order>(o => o.Id);
+
+            modelBuilder.Entity<AppUser>()
+            .HasOne(a => a.Customer)
+            .WithOne(c => c.AppUser)
+            .HasForeignKey<Customer>(c => c.AppUserId);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.CompletedOrder)
