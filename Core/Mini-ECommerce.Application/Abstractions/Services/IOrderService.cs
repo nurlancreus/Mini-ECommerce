@@ -10,7 +10,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services
     public interface IOrderService
     {
         Task CreateOrderAsync(CreateOrderDTO createOrder);
-       // Task<ListOrder> GetAllOrdersAsync(int page, int size);
+        Task<GetAllOrdersDTO> GetAllOrdersAsync(int page, int size);
         Task<GetOrderDTO> GetOrderByIdAsync(string id);
         //Task<(bool, CompletedOrderDTO)> CompleteOrderAsync(string id);
     }
