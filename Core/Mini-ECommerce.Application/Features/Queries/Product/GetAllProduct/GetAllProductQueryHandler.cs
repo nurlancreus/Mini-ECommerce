@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.DTOs.Pagination;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
@@ -18,10 +20,12 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
     {
 
         private readonly IProductReadRepository _productReadRepository;
+        private readonly IPaginationService _paginationService;
 
-        public GetAllProductQueryHandler(IProductReadRepository productReadRepository)
+        public GetAllProductQueryHandler(IProductReadRepository productReadRepository, IPaginationService paginationService)
         {
             _productReadRepository = productReadRepository;
+            _paginationService = paginationService;
         }
 
         public async Task<GetAllProductQueryResponse> Handle(GetAllProductQueryRequest request, CancellationToken cancellationToken)
@@ -29,31 +33,21 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
             // Fetch the queryable data source
             var query = _productReadRepository.GetAll(false);
 
-            // Count the total items asynchronously
-            var totalItems = await query.CountAsync(cancellationToken: cancellationToken);
-
-            // Calculate total number of pages
-            var totalPages = (int)Math.Ceiling(totalItems / (double)request.PageSize);
-
-            if (request.PageSize <= 0 || request.PageSize > 100)
+            var paginationRequest = new PaginationRequestDTO()
             {
-                throw new InvalidPaginationException(PaginationErrorType.InvalidPageSize, request.PageSize);
-            }
+                Page = request.Page,
+                PageSize = request.PageSize,
+            };
 
-            if (request.Page < 1 || request.Page > totalPages)
-            {
-                throw new InvalidPaginationException(PaginationErrorType.InvalidPageNumber, request.Page);
-            }
+            var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
 
             // Fetch the requested page of products
-            var products = await query
-                .Skip((request.Page - 1) * request.PageSize)
-                .Take(request.PageSize)
+            var products = await paginatedQuery
                 .Include(p => p.ProductProductImageFiles)
                 .ThenInclude(p => p.ProductImageFile)
                 .Select(p => new GetProductVM
                 {
-                    Id = p.Id,
+                    Id = p.Id.ToString(),
                     Name = p.Name,
                     Price = p.Price,
                     Stock = p.Stock,

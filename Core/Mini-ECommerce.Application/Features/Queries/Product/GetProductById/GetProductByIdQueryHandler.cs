@@ -48,7 +48,7 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
             {
                 Product = new GetProductVM
                 {
-                    Id = product.Id,
+                    Id = product.Id.ToString(),
                     Name = product.Name,
                     Price = product.Price,
                     Stock = product.Stock,
