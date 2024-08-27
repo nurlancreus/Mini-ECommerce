@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.DTOs.Basket;
+using Mini_ECommerce.Application.DTOs.User;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
@@ -34,7 +35,38 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             _basketReadRepository = basketReadRepository;
         }
 
-        public Basket? UserActiveBasket => GetTargetBasket().Result;
+        public GetBasketDTO? UserActiveBasket
+        {
+            get
+            {
+                Basket? basket = GetTargetBasket().Result;
+
+                if (basket != null)
+                {
+                    return new GetBasketDTO
+                    {
+                        Id = basket.Id.ToString(),
+                        BasketItems = basket.BasketItems.Select(bi => new GetBasketItemDTO()
+                        {
+                            Name = bi.Product.Name,
+                            Price = bi.Product.Price,
+                            Quantity = bi.Quantity,
+                            TotalPrice = bi.Quantity * bi.Product.Price,
+                        }).ToList(),
+                        User = new GetAppUserDTO()
+                        {
+                            FirstName = basket.User.FirstName,
+                            LastName = basket.User.LastName,
+                            Email = basket.User.Email!,
+                            UserName = basket.User.UserName!
+                        }
+                    };
+                }
+
+                return null;
+
+            }
+        }
 
         public async Task AddItemToBasketAsync(CreateBasketItemDTO basketItem)
         {
@@ -91,7 +123,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         }
 
 
-        public async Task<List<BasketItem>> GetBasketItemsAsync()
+        public async Task<List<GetBasketItemDTO>> GetBasketItemsAsync()
         {
             // Retrieve the user's target basket
             Basket? basket = await GetTargetBasket() ?? throw new InvalidOperationException("Basket could not be found or created.");
@@ -103,7 +135,14 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 .FirstOrDefaultAsync(b => b.Id == basket.Id) ?? throw new InvalidOperationException("The basket was not found in the repository.");
 
             // If basket items are null, return an empty list to avoid null reference exception
-            return result.BasketItems?.ToList() ?? [];
+
+            return result.BasketItems.Select(bi => new GetBasketItemDTO()
+            {
+                Name = bi.Product.Name,
+                Price = bi.Product.Price,
+                Quantity = bi.Quantity,
+                TotalPrice = bi.Quantity * bi.Product.Price
+            }).ToList();
         }
 
 

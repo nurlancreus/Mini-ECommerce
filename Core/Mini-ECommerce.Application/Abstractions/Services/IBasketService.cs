@@ -10,10 +10,10 @@ namespace Mini_ECommerce.Application.Abstractions.Services
 {
     public interface IBasketService
     {
-        public Task<List<BasketItem>> GetBasketItemsAsync();
+        public Task<List<GetBasketItemDTO>> GetBasketItemsAsync();
         public Task AddItemToBasketAsync(CreateBasketItemDTO basketItem);
         public Task UpdateQuantityAsync(UpdateBasketItemDTO basketItem);
         public Task RemoveBasketItemAsync(string basketItemId);
-        public Basket? UserActiveBasket { get; }
+        public GetBasketDTO? UserActiveBasket { get; }
     }
 }
