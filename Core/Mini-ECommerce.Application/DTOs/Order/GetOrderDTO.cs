@@ -1,4 +1,6 @@
 ﻿using Mini_ECommerce.Application.DTOs.Address;
+using Mini_ECommerce.Application.DTOs.Basket;
+using Mini_ECommerce.Application.DTOs.Customer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +13,13 @@ namespace Mini_ECommerce.Application.DTOs.Order
     {
         public string Id { get; set; }
         public GetAddressDTO Address { get; set; }
-        public object BasketItems { get; set; }
+        public GetCustomerDTO Customer { get; set; }
+        public List<GetBasketItemDTO> BasketItems { get; set; } = [];
         public DateTime CreatedAt { get; set; }
         public string Description { get; set; }
         public string OrderCode { get; set; }
         public bool Completed { get; set; }
+        public float TotalPrice { get; set; }
+        
     }
 }
