@@ -26,9 +26,10 @@ namespace Mini_ECommerce.Application.Features.Queries.Basket.GetBasketItems
             {
                 BasketItems = basketItems.Select(item => new GetBasketItemDTO()
                 {
-                    Name = item.Product.Name,
-                    Price = item.Product.Price,
+                    Name = item.Name,
+                    Price = item.Price,
                     Quantity = item.Quantity,
+                    TotalPrice = item.TotalPrice,
                 }).ToList()
             };
         }
