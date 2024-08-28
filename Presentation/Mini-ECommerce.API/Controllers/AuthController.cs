@@ -7,6 +7,8 @@ using Mini_ECommerce.Application.Features.Commands.AppUser.GoogleLoginUser;
 using Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser;
 using Mini_ECommerce.Application.Features.Commands.AppUser.RefreshTokenLogin;
 using Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser;
+using Mini_ECommerce.Application.Features.Commands.AppUser.ResetPassword;
+using Mini_ECommerce.Application.Features.Commands.AppUser.VerifyResetToken;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -91,6 +93,20 @@ namespace Mini_ECommerce.API.Controllers
             {
                 return BadRequest(new { Error = "An unexpected error occurred.", Details = ex.Message });
             }
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordCommandRequest resetPasswordCommandRequest)
+        {
+            var response = await _mediator.Send(resetPasswordCommandRequest);
+            return Ok(response);
+        }
+
+        [HttpPost("verify-reset-token")]
+        public async Task<IActionResult> VerifyResetToken([FromBody] VerifyResetTokenCommandRequest verifyResetTokenCommandRequest)
+        {
+            var response = await _mediator.Send(verifyResetTokenCommandRequest);
+            return Ok(response);
         }
     }
 }
