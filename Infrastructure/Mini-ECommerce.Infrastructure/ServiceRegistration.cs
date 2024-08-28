@@ -26,6 +26,7 @@ namespace Mini_ECommerce.Infrastructure
             services.AddScoped<IStorageService, StorageService>();
             services.AddScoped<IAppTokenHandler, AppTokenHandler>();
             services.AddScoped<IPaginationService, PaginationService>();
+            services.AddScoped<IMailService, MailService>();
 
             return services;
         }
