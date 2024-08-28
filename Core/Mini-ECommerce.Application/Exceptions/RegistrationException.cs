@@ -19,5 +19,9 @@ namespace Mini_ECommerce.Application.Exceptions
         {
             
         }
+
+        public RegistrationException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
     }
 }

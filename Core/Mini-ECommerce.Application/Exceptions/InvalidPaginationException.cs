@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,10 +20,14 @@ namespace Mini_ECommerce.Application.Exceptions
         public int InvalidValue { get; }
 
         public InvalidPaginationException(PaginationErrorType errorType, int invalidValue)
-            : base(GenerateMessage(errorType, invalidValue))
+            : base(HttpStatusCode.BadRequest, GenerateMessage(errorType, invalidValue))
         {
             ErrorType = errorType;
             InvalidValue = invalidValue;
+        }
+
+        public InvalidPaginationException(string? message, Exception? innerException) : base(message, innerException)
+        {
         }
 
         private static string GenerateMessage(PaginationErrorType errorType, int invalidValue)

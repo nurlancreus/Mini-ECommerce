@@ -19,7 +19,7 @@ namespace Mini_ECommerce.Application.Exceptions
         }
 
         public EntityNotFoundException(string entityName, string customMessage)
-            : base(HttpStatusCode.NotFound,customMessage)
+            : base(HttpStatusCode.NotFound, customMessage)
         {
             EntityName = entityName;
         }
@@ -31,9 +31,13 @@ namespace Mini_ECommerce.Application.Exceptions
         }
 
         public EntityNotFoundException(string entityName, int entityId, string customMessage)
-            : base(customMessage)
+            : base(HttpStatusCode.NotFound, customMessage)
         {
             EntityName = entityName;
+        }
+
+        public EntityNotFoundException(string? message, Exception? innerException) : base(message, innerException)
+        {
         }
     }
 }

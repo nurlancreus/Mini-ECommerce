@@ -25,5 +25,9 @@ namespace Mini_ECommerce.Application.Exceptions.Base
         {
             StatusCode = httpStatusCode;
         }
+
+        public BaseException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
     }
 }
