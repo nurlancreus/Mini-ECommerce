@@ -25,12 +25,11 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppTokenHandler _tokenHandler;
 
-        public InternalAuthService(UserManager<AppUser> userManager, IAppTokenHandler tokenHandler, SignInManager<AppUser> signInManager, IUserService userService)
+        public InternalAuthService(UserManager<AppUser> userManager, IMailService mailService, IUserService userService, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler) : base(userManager, mailService)
         {
-            _userManager = userManager;
-            _tokenHandler = tokenHandler;
-            _signInManager = signInManager;
             _userService = userService;
+            _signInManager = signInManager;
+            _tokenHandler = tokenHandler;
         }
 
         public async Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO)

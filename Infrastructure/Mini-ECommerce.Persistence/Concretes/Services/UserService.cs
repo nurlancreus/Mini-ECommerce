@@ -5,6 +5,7 @@ using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.User;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.Extensions;
 using Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
@@ -21,6 +22,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
+
+        public int TotalUsersCount => throw new NotImplementedException();
 
         public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration)
         {
@@ -74,6 +77,42 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             }
             else
                 throw new EntityNotFoundException(nameof(user), "User not found to update refresh token");
+        }
+
+        public async Task UpdatePasswordAsync(string userId, string resetToken, string newPassword)
+        {
+            AppUser? user = await _userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                resetToken = resetToken.UrlDecode();
+                IdentityResult result = await _userManager.ResetPasswordAsync(user, resetToken, newPassword);
+
+                if (result.Succeeded)
+                    await _userManager.UpdateSecurityStampAsync(user); // reset 'reset' token
+                else
+                    throw new PasswordChangeFailedException();
+            }
+        }
+
+        public Task<List<GetAppUserDTO>> GetAllUsersAsync(int page, int size)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task AssignRoleToUserAsnyc(string userId, string[] roles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string[]> GetRolesToUserAsync(string userIdOrName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> HasRolePermissionToEndpointAsync(string name, string code)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
     public interface IAuthService
     {
-        Task PasswordResetAsnyc(string email);
+        Task ResetPasswordAsnyc(string email);
         Task<bool> VerifyResetTokenAsync(string resetToken, string userId);
     }
 }

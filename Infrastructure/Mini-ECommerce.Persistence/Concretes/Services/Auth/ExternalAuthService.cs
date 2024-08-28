@@ -30,13 +30,12 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
 
-        public ExternalAuthService(UserManager<AppUser> userManager, IHttpClientFactory httpClientFactory, IAppTokenHandler tokenHandler, IConfiguration configuration, IUserService userService)
+        public ExternalAuthService(UserManager<AppUser> userManager, IMailService mailService, HttpClient httpClient, IUserService userService, IAppTokenHandler tokenHandler, IConfiguration configuration) : base(userManager, mailService)
         {
-            _userManager = userManager;
-            _httpClient = httpClientFactory.CreateClient();
+            _httpClient = httpClient;
+            _userService = userService;
             _tokenHandler = tokenHandler;
             _configuration = configuration;
-            _userService = userService;
         }
 
         public async Task<TokenDTO> FacebookLoginAsync(string authToken, string provider)
