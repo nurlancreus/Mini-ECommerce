@@ -59,10 +59,10 @@ namespace Mini_ECommerce.Persistence.Contexts
                 .WithOne(o => o.Basket)
                 .HasForeignKey<Order>(o => o.Id);
 
-            modelBuilder.Entity<AppUser>()
-            .HasOne(a => a.Customer)
-            .WithOne(c => c.AppUser)
-            .HasForeignKey<Customer>(c => c.AppUserId);
+            //modelBuilder.Entity<AppUser>()
+            //.HasOne(a => a.Customer)
+            //.WithOne(c => c.AppUser)
+            //.HasForeignKey<Customer>(c => c.AppUserId);
 
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.CompletedOrder)
@@ -95,7 +95,6 @@ namespace Mini_ECommerce.Persistence.Contexts
             return base.SaveChangesAsync(cancellationToken);
         }
         public DbSet<Product> Products { get; set; }
-        public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<AppFile> ApplicationFiles { get; set; }
