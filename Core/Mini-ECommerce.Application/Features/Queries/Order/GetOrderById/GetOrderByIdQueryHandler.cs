@@ -33,6 +33,7 @@ namespace Mini_ECommerce.Application.Features.Queries.Order.GetOrderById
                     Description = order.Description,
                     OrderCode = order.OrderCode,
                     TotalPrice = order.TotalPrice,
+                    IsCompleted = order.isCompleted,
                     Address = new GetAddressVM()
                     {
                         Id = order.Address.Id,
