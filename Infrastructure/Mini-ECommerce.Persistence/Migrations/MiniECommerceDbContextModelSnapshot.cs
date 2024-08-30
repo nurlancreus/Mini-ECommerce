@@ -162,7 +162,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Addresses", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.AppFile", b =>
@@ -193,7 +193,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationFiles");
+                    b.ToTable("ApplicationFiles", (string)null);
 
                     b.HasDiscriminator().HasValue("AppFile");
 
@@ -220,7 +220,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Baskets");
+                    b.ToTable("Baskets", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.BasketItem", b =>
@@ -250,7 +250,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("BasketItems");
+                    b.ToTable("BasketItems", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.CompletedOrder", b =>
@@ -273,7 +273,7 @@ namespace Mini_ECommerce.Persistence.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("CompletedOrders");
+                    b.ToTable("CompletedOrders", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.Identity.AppRole", b =>
@@ -409,7 +409,7 @@ namespace Mini_ECommerce.Persistence.Migrations
                     b.HasIndex("OrderCode")
                         .IsUnique();
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.Product", b =>
@@ -436,7 +436,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.ProductProductImageFile", b =>
@@ -456,7 +456,7 @@ namespace Mini_ECommerce.Persistence.Migrations
 
                     b.HasIndex("ProductImageFileId");
 
-                    b.ToTable("ProductProductImageFiles");
+                    b.ToTable("ProductProductImageFiles", (string)null);
                 });
 
             modelBuilder.Entity("Mini_ECommerce.Domain.Entities.InvoiceFile", b =>
