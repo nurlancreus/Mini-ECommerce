@@ -27,11 +27,11 @@ namespace Mini_ECommerce.Persistence
            
             services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
 
-            services.AddScoped<ICustomerReadRepository, CustomerReadRepository>();
-            services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
-
             services.AddScoped<IOrderReadRepository, OrderReadRepository>();
             services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+            
+            services.AddScoped<ICompletedOrderReadRepository, CompletedOrderReadRepository>();
+            services.AddScoped<ICompletedOrderWriteRepository, CompletedOrderWriteRepository>();
 
             services.AddScoped<IProductReadRepository, ProductReadRepository>();
             services.AddScoped<IProductWriteRepository, ProductWriteRepository>();
