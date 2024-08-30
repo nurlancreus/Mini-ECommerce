@@ -10,6 +10,6 @@ namespace Mini_ECommerce.Application.Abstractions.Services
 {
     public interface IPaginationService
     {
-        Task<PaginationResponseDTO<T>> ConfigurePaginationAsync<T>(PaginationRequestDTO paginationRequestDTO, IQueryable<T> entities) where T : BaseEntity;
+        Task<PaginationResponseDTO<T>> ConfigurePaginationAsync<T>(PaginationRequestDTO paginationRequestDTO, IQueryable<T> entities) where T : IBase;
     }
 }

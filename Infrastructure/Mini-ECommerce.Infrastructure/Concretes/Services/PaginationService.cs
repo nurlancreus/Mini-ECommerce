@@ -14,7 +14,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 {
     public class PaginationService : IPaginationService
     {
-        public async Task<PaginationResponseDTO<T>> ConfigurePaginationAsync<T>(PaginationRequestDTO paginationRequestDTO, IQueryable<T> entities) where T : BaseEntity
+        public async Task<PaginationResponseDTO<T>> ConfigurePaginationAsync<T>(PaginationRequestDTO paginationRequestDTO, IQueryable<T> entities) where T : IBase
         {
             var totalItems = await entities.CountAsync();
 
