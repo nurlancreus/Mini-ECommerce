@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Domain.Entities.Base
 {
-    public class BaseEntity
+    public abstract class BaseEntity : IBase
     {
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
