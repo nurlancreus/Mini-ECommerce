@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Mini_ECommerce.Application.Features.Commands.Order.CompleteOrder;
 using Mini_ECommerce.Application.Features.Commands.Order.CreateOrder;
+using Mini_ECommerce.Application.Features.Queries.Order.GetAllCustomers;
 using Mini_ECommerce.Application.Features.Queries.Order.GetAllOrders;
 using Mini_ECommerce.Application.Features.Queries.Order.GetOrderById;
 
@@ -19,7 +21,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet("{Id}")]
-    
+
         public async Task<ActionResult> GetOrderById([FromRoute] GetOrderByIdQueryRequest getOrderByIdQueryRequest)
         {
             var response = await _mediator.Send(getOrderByIdQueryRequest);
@@ -45,6 +47,14 @@ namespace Mini_ECommerce.API.Controllers
         public async Task<ActionResult> CompleteOrder([FromRoute] CompleteOrderCommandRequest completeOrderCommandRequest)
         {
             var response = await _mediator.Send(completeOrderCommandRequest);
+
+            return Ok(response);
+        }
+
+        [HttpGet("/customers")]
+        public async Task<IActionResult> GetCustomers([FromQuery] GetAllCustomersQueryRequest getAllCustomersQueryRequest)
+        {
+            var response = _mediator.Send(getAllCustomersQueryRequest);
 
             return Ok(response);
         }
