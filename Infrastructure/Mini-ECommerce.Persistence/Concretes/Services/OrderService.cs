@@ -3,10 +3,12 @@ using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.DTOs.Address;
 using Mini_ECommerce.Application.DTOs.Basket;
+using Mini_ECommerce.Application.DTOs.Customer;
 using Mini_ECommerce.Application.DTOs.Order;
 using Mini_ECommerce.Application.DTOs.Pagination;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Domain.Entities;
+using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly IBasketReadRepository _basketReadRepository;
         private readonly IBasketItemReadRepository _basketItemReadRepository;
         private readonly IPaginationService _paginationService;
+        private readonly ICompletedOrderReadRepository _completedOrderReadRepository;
+        private readonly ICompletedOrderWriteRepository _completedOrderWriteRepository;
 
         public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IPaginationService paginationService, IBasketReadRepository basketReadRepository, IBasketItemReadRepository basketItemReadRepository)
         {
@@ -31,6 +35,51 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             _basketReadRepository = basketReadRepository;
             _basketItemReadRepository = basketItemReadRepository;
         }
+
+        public async Task<(bool IsSuccess, CompletedOrderDTO? CompletedOrder)> CompleteOrderAsync(string id)
+        {
+            if (!Guid.TryParse(id, out Guid orderId))
+            {
+                // Invalid GUID format
+                return (false, null);
+            }
+
+            // Retrieve the order by ID with related data
+            var order = await _orderReadRepository.Table
+                .Include(o => o.Basket)
+                .ThenInclude(b => b.User)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+            {
+                // Order not found
+                return (false, null);
+            }
+
+            // Create a new completed order record
+            var completedOrder = new CompletedOrder
+            {
+                OrderId = orderId
+            };
+
+            // Add the completed order to the repository
+            await _completedOrderWriteRepository.AddAsync(completedOrder);
+
+            // Save changes to the repository
+            bool isSaved = await _completedOrderWriteRepository.SaveAsync() > 0;
+
+            // Prepare the DTO for the response
+            var completedOrderDTO = new CompletedOrderDTO
+            {
+                OrderCode = order.OrderCode,
+                OrderDate = order.CreatedAt,
+                Username = order.Basket.User.UserName,
+                Email = order.Basket.User.Email
+            };
+
+            return (isSaved, completedOrderDTO);
+        }
+
 
         public async Task CreateOrderAsync(CreateOrderDTO createOrder)
         {
@@ -62,21 +111,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
 
         public async Task<GetAllOrdersDTO> GetAllOrdersAsync(int page, int size)
         {
-            //var orders = _orderGetRepository.Table.Include(o => o.Address).Include(o => o.Basket);
-            var query = _orderReadRepository.GetAll(false);
-
-            // Create pagination request
-            var paginationRequest = new PaginationRequestDTO
-            {
-                Page = page,  // Ensure 'page' is defined and in scope
-                PageSize = size  // Ensure 'size' is defined and in scope
-            };
-
-            // Call pagination service
-            var paginationResult = await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
-
             // Deconstruct the result
-            var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = paginationResult;
+            var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = await GetPaginatedOrdersAsync(page, size);
 
             var orders = await paginatedQuery
                 .Include(o => o.Address)
@@ -89,6 +125,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             {
                 Orders = orders.Select(o => new GetOrderDTO()
                 {
+                    isCompleted = _completedOrderReadRepository.Table.AnyAsync(co => co.Id == o.Id).Result,
                     Description = o.Description,
                     Id = o.Id.ToString(),
                     CreatedAt = o.CreatedAt,
@@ -115,8 +152,45 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 Page = page,
                 TotalCount = totalItems,
                 TotalPages = totalPages,
+
             };
 
+        }
+
+        public async Task<List<GetCustomerDTO>> GetCustomersAsync(int page, int size)
+        {
+            var completedOrderIds = await _completedOrderReadRepository.Table
+                .Select(co => co.OrderId)
+                .ToListAsync();
+
+            var ordersQuery = _orderReadRepository.GetAll()
+                .Where(o => completedOrderIds.Contains(o.Id))
+                .Include(o => o.Basket)
+                .ThenInclude(b => b.User)
+                .AsNoTracking();
+
+            var orders = ordersQuery.Include(o => o.Basket).ThenInclude(b => b.User);
+
+            var customersQuery = orders.Select(o => o.Basket.User).Distinct();
+
+            var paginationRequest = new PaginationRequestDTO()
+            {
+                Page = page,
+                PageSize = size,
+            };
+
+            var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = await _paginationService.ConfigurePaginationAsync(paginationRequest, customersQuery);
+
+            List<GetCustomerDTO> customers = await paginatedQuery.Select(c => new GetCustomerDTO()
+            {
+                Id = c.Id,
+                FirstName = c.FirstName,
+                LastName = c.LastName,
+                Email = c.Email!,
+                UserName = c.UserName!
+            }).ToListAsync();
+
+            return customers;
         }
 
         public async Task<GetOrderDTO> GetOrderByIdAsync(string id)
@@ -163,9 +237,22 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                     Quantity = bi.Quantity,
                     TotalPrice = bi.Quantity * bi.Product.Price
                 }).ToList(),
-                Completed = false,
+                isCompleted = await _completedOrderReadRepository.Table.AnyAsync(co => co.Id == order.Id),
                 TotalPrice = order.Basket.BasketItems.Sum(bi => bi.Quantity * bi.Product.Price)
             };
+        }
+
+        private async Task<PaginationResponseDTO<Order>> GetPaginatedOrdersAsync(int page, int size)
+        {
+            var query = _orderReadRepository.GetAll(false);
+
+            var paginationRequest = new PaginationRequestDTO()
+            {
+                Page = page,
+                PageSize = size,
+            };
+
+            return await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
         }
     }
 }
