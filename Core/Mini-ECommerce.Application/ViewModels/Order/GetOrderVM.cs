@@ -18,6 +18,7 @@ namespace Mini_ECommerce.Application.ViewModels.Order
         public GetAddressVM Address { get; set; }
         public string OrderCode { get; set; }
         public float TotalPrice { get; set; }
+        public bool IsCompleted { get; set; }
         public GetCustomerVM Customer { get; set; }
         public DateTime CreatedAt { get; set; }
         public List<GetBasketItemVM> BasketItems { get; set; } = [];
