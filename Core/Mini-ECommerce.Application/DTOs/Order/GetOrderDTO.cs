@@ -18,7 +18,7 @@ namespace Mini_ECommerce.Application.DTOs.Order
         public DateTime CreatedAt { get; set; }
         public string Description { get; set; }
         public string OrderCode { get; set; }
-        public bool Completed { get; set; }
+        public bool isCompleted { get; set; }
         public float TotalPrice { get; set; }
         
     }

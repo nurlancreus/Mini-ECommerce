@@ -9,7 +9,10 @@ namespace Mini_ECommerce.Application.DTOs.Customer
 {
     public class GetCustomerDTO
     {
-        string Id { get; set; }
-        public GetAppUserDTO AppUser { get; set; }
+        public string Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string UserName { get; set; }
+        public string Email { get; set; }
     }
 }

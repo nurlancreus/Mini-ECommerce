@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Mini_ECommerce.Application.DTOs.Pagination
 {
-    public class PaginationResponseDTO<T> where T : BaseEntity
+    public class PaginationResponseDTO<T> where T : IBase
     {
         public int TotalItems { get; set; } // Total number of items
         public int TotalPages { get; set; } // Total number of pages
