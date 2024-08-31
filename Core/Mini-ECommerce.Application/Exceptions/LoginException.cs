@@ -22,6 +22,7 @@ namespace Mini_ECommerce.Application.Exceptions
 
         public LoginException(string? message, Exception? innerException) : base(message, innerException)
         {
+
         }
     }
 }
