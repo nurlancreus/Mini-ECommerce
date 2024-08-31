@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mini_ECommerce.Application.Abstractions.Services.Application;
+using Mini_ECommerce.Application.Attributes;
+using Mini_ECommerce.Application.Enums;
 
 namespace Mini_ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Admin")]
     public class ApplicationServiceController : ControllerBase
     {
         private readonly IApplicationService _applicationService;
@@ -16,11 +20,12 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Application, ActionType = ActionType.Reading, Definition = "Get Authorize Definition Endpoints")]
         public IActionResult Get()
         {
-            var datas = _applicationService.GetAuthorizeDefinitionEndpoints(typeof(Program));
+            var result = _applicationService.GetAuthorizeDefinitionEndpoints(typeof(Program));
 
-            return Ok(datas);
+            return Ok(result);
         }
     }
 }
