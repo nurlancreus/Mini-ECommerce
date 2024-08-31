@@ -17,11 +17,12 @@ namespace Mini_ECommerce.Application.Validators.Order
         public CompleteOrderCommandRequestValidator(IOrderReadRepository orderReadRepository)
         {
             _orderReadRepository = orderReadRepository;
-        }
-
-        public CompleteOrderCommandRequestValidator()
-        {
-            RuleFor(co => co.Id).MustAsync(async (id, cancellation) =>
+            RuleFor(co => co.Id)
+                .NotEmpty()
+                    .WithMessage("Please do not leave the order id empty.")
+                .NotNull()
+                    .WithMessage("Order id is required.")
+                .MustAsync(async (id, cancellation) =>
             {
                 return await OrderExists(id);
             }).WithMessage("Order does not exist");
