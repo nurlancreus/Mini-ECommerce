@@ -18,15 +18,16 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
 {
-    public class InternalAuthService : AuthService, IInternalAuthService
+    public class InternalAuthService : IInternalAuthService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly IUserService _userService;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppTokenHandler _tokenHandler;
 
-        public InternalAuthService(UserManager<AppUser> userManager, IMailService mailService, IUserService userService, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler) : base(userManager, mailService)
+        public InternalAuthService(UserManager<AppUser> userManager, IUserService userService, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler)
         {
+            _userManager = userManager;
             _userService = userService;
             _signInManager = signInManager;
             _tokenHandler = tokenHandler;

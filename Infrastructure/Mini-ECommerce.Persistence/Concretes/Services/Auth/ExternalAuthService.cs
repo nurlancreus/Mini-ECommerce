@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
 {
-    public class ExternalAuthService : AuthService, IExternalAuthService
+    public class ExternalAuthService : IExternalAuthService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly HttpClient _httpClient;
@@ -30,8 +30,9 @@ namespace Mini_ECommerce.Persistence.Concretes.Services.Auth
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
 
-        public ExternalAuthService(UserManager<AppUser> userManager, IMailService mailService, HttpClient httpClient, IUserService userService, IAppTokenHandler tokenHandler, IConfiguration configuration) : base(userManager, mailService)
+        public ExternalAuthService(UserManager<AppUser> userManager, HttpClient httpClient, IUserService userService, IAppTokenHandler tokenHandler, IConfiguration configuration)
         {
+            _userManager = userManager;
             _httpClient = httpClient;
             _userService = userService;
             _tokenHandler = tokenHandler;

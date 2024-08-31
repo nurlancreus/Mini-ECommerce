@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
-    public interface IInternalAuthService : IAuthService
+    public interface IInternalAuthService
     {
         Task<LoginUserResponseDTO> LoginAsync(LoginUserRequestDTO loginUserRequestDTO);
         Task<TokenDTO> RefreshTokenLoginAsync(string accessToken, string refreshToken);

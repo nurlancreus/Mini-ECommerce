@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
-    public interface IExternalAuthService : IAuthService
+    public interface IExternalAuthService
     {
         Task<TokenDTO> GoogleLoginAsync(string idToken, string provider);
         Task<TokenDTO> FacebookLoginAsync(string authToken, string provider);
