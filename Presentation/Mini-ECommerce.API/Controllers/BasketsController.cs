@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Mini_ECommerce.Application.Attributes;
+using Mini_ECommerce.Application.Enums;
 using Mini_ECommerce.Application.Features.Commands.Basket.AddItemToBasket;
 using Mini_ECommerce.Application.Features.Commands.Basket.RemoveItemFromBasket;
 using Mini_ECommerce.Application.Features.Commands.Basket.UpdateItemQuantity;
@@ -20,7 +22,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
-
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Baskets, ActionType = ActionType.Reading, Definition = "Get All Basket Items")]
         public async Task<IActionResult> GetBasketItems([FromQuery] GetBasketItemsQueryRequest getBasketItemsQuery)
         {
             var response = await _mediator.Send(getBasketItemsQuery);
@@ -28,6 +30,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Baskets, ActionType = ActionType.Writing, Definition = "Add item to the Basket")]
         public async Task<IActionResult> AddItemToBasket(AddItemToBasketCommandRequest addItemToBasketCommandRequest)
         {
             AddItemToBasketCommandResponse response = await _mediator.Send(addItemToBasketCommandRequest);
@@ -36,6 +39,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Baskets, ActionType = ActionType.Updating, Definition = "Update item's quantity in the Basket")]
         public async Task<IActionResult> UpdateQuantity(UpdateItemQuantityCommandRequest updateItemQuantityCommand)
         {
             var response = await _mediator.Send(updateItemQuantityCommand);
@@ -43,7 +47,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpDelete("{BasketItemId}")]
-
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Baskets, ActionType = ActionType.Deleting, Definition = "Delete item from the Basket")]
         public async Task<IActionResult> RemoveBasketItem([FromRoute] RemoveItemFromBasketCommandRequest removeItemFromBasket)
         {
             var response = await _mediator.Send(removeItemFromBasket);

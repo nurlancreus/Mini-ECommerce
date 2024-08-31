@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
+using Mini_ECommerce.Application.Attributes;
+using Mini_ECommerce.Application.Enums;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Exceptions.Base;
 using Mini_ECommerce.Application.Features.Commands.Product.CreateProduct;
@@ -55,6 +57,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Reading, Definition = "Get All Products")]
         public async Task<IActionResult> GetAll([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
         {
             var response = await _mediator.Send(getAllProductQueryRequest);
@@ -64,6 +67,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet("{Id}")]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Reading, Definition = "Get Product")]
         public async Task<IActionResult> Get(GetProductByIdQueryRequest getProductByIdQueryRequest)
         {
             var response = await _mediator.Send(getProductByIdQueryRequest);
@@ -72,6 +76,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPost]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Writing, Definition = "Create Product")]
         public async Task<IActionResult> Create(CreateProductCommandRequest createProductCommandRequest)
         {
             await _mediator.Send(createProductCommandRequest);
@@ -80,6 +85,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPut]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
         public async Task<IActionResult> Update(UpdateProductCommandRequest updateProductCommandRequest)
         {
             await _mediator.Send(updateProductCommandRequest);
@@ -88,6 +94,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpDelete]
+        [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
         public async Task<IActionResult> Delete(RemoveProductCommandRequest removeProductCommandRequest)
         {
             await _mediator.Send(removeProductCommandRequest);
