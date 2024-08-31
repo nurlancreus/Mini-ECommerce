@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
@@ -51,16 +52,32 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
                         menus.Add(menu);
                     }
 
+                    var roles = new string[authorizeDefinitionAttribute.Roles.Length];
+
+                    for (int i = 0; i < roles.Length; i++)
+                    {
+                        var role = authorizeDefinitionAttribute.Roles[i].ToString();
+                        roles[i] = role;
+                    }
+
                     // Create ActionDTO based on attribute data
                     var actionDto = new ActionDTO
                     {
                         ActionType = authorizeDefinitionAttribute.ActionType.ToString(),
                         Definition = authorizeDefinitionAttribute.Definition,
                         Method = GetHttpMethod(action).ToString(),
+                        Roles = roles
                     };
 
+                    var code = new StringBuilder($"\"{actionDto.Method}.{actionDto.ActionType}.{FormatDefinition(actionDto.Definition)}");
+
+                    if(actionDto.Roles.Length > 0)
+                    {
+                        code.Append($".{ string.Join(";", actionDto.Roles)}");
+                    }
+
                     // Generate a unique code for the action
-                    actionDto.Code = $"{actionDto.Method}.{actionDto.ActionType}.{CapitalizeEachWord(actionDto.Definition)}";
+                    actionDto.Code = code.ToString();
 
                     menu.Actions.Add(actionDto);
                 }
@@ -83,7 +100,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
         }
 
         // Helper method to capitalize each word in the string
-        private static string CapitalizeEachWord(string input)
+        private static string FormatDefinition(string input)
         {
             if (string.IsNullOrWhiteSpace(input))
                 return string.Empty;
@@ -95,7 +112,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
             var capitalizedWords = words.Select(word => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.ToLower()));
 
             // Join the words back together without spaces
-            return string.Join("", capitalizedWords);
+            return string.Join("", capitalizedWords).Replace("'", "");
         }
     }
 }
