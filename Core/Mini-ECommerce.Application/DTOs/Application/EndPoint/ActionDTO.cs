@@ -13,5 +13,6 @@ namespace Mini_ECommerce.Application.DTOs.Configuration
         public string Method { get; set; }
         public string Definition { get; set; }
         public string Code { get; set; }
+        public string[] Roles { get; set; }
     }
 }
