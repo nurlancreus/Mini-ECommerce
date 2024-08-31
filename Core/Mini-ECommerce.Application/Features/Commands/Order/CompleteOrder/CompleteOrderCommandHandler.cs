@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.DTOs.Customer;
 using Mini_ECommerce.Application.DTOs.Order;
+using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.Order;
 using System;
 using System.Collections.Generic;
@@ -13,28 +15,50 @@ namespace Mini_ECommerce.Application.Features.Commands.Order.CompleteOrder
     public class CompleteOrderCommandHandler : IRequestHandler<CompleteOrderCommandRequest, CompleteOrderCommandResponse>
     {
         private readonly IOrderService _orderService;
+        private readonly IMailService _mailService;
 
-        public CompleteOrderCommandHandler(IOrderService orderService)
+        public CompleteOrderCommandHandler(IOrderService orderService, IMailService mailService)
         {
             _orderService = orderService;
+            _mailService = mailService;
         }
 
         public async Task<CompleteOrderCommandResponse> Handle(CompleteOrderCommandRequest request, CancellationToken cancellationToken)
         {
             (bool isSuccess, CompletedOrderDTO? completedOrder) = await _orderService.CompleteOrderAsync(request.Id);
 
-            return new CompleteOrderCommandResponse()
+            if (isSuccess && completedOrder != null)
             {
-                Success = isSuccess,
-                Message = "Order Completed Successfully!",
-                Order = new GetCompletedOrderVM()
+                var customer = new GetCustomerDTO()
                 {
-                    OrderCode = completedOrder.OrderCode,
-                    Username = completedOrder.Username,
+                    FirstName = completedOrder.Firstname,
+                    LastName = completedOrder.Lastname,
+                    UserName = completedOrder.Username,
                     Email = completedOrder.Email,
-                    OrderDate = completedOrder.OrderDate,
-                }
-            };
+                };
+
+                await _mailService.SendCompletedOrderMailAsync(completedOrder.OrderCode, completedOrder.OrderDate, customer);
+
+                return new CompleteOrderCommandResponse()
+                {
+                    Success = isSuccess,
+                    Message = "Order Completed Successfully!",
+                    Order = new GetCompletedOrderVM()
+                    {
+                        OrderCode = completedOrder.OrderCode,
+                        Firstname = completedOrder.Firstname,
+                        Lastname = completedOrder.Lastname,
+                        Username = completedOrder.Username,
+                        Email = completedOrder.Email,
+                        OrderDate = completedOrder.OrderDate,
+                    }
+                };
+            }
+            else
+            {
+                throw new OrderNotCompletedException();
+            }
+
         }
     }
 }
