@@ -52,6 +52,7 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
 
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IRoleService, RoleService>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IExternalAuthService, ExternalAuthService>();
