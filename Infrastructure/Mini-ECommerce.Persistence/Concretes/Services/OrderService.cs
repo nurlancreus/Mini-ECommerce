@@ -12,6 +12,7 @@ using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,7 +42,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             if (!Guid.TryParse(id, out Guid orderId))
             {
                 // Invalid GUID format
-                return (false, null);
+                throw new OrderNotCompletedException("Order not found", new InvalidOperationException("Cannot parse order Id"));
             }
 
             // Retrieve the order by ID with related data
@@ -53,7 +54,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             if (order == null)
             {
                 // Order not found
-                return (false, null);
+                throw new OrderNotCompletedException(HttpStatusCode.BadRequest, $"Order with the Id of {orderId} not found!");
             }
 
             // Create a new completed order record
@@ -71,10 +72,12 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             // Prepare the DTO for the response
             var completedOrderDTO = new CompletedOrderDTO
             {
+                Firstname = order.Basket.User.FirstName,
+                Lastname = order.Basket.User.LastName,
                 OrderCode = order.OrderCode,
                 OrderDate = order.CreatedAt,
-                Username = order.Basket.User.UserName,
-                Email = order.Basket.User.Email
+                Username = order.Basket.User.UserName!,
+                Email = order.Basket.User.Email!
             };
 
             return (isSaved, completedOrderDTO);
