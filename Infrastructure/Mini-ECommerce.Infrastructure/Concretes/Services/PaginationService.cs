@@ -25,6 +25,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 
             var totalPages = (int)Math.Ceiling(totalItems / (double)paginationRequestDTO.PageSize);
 
+            totalPages = totalPages == 0 ? 1 : totalPages;
 
             if (paginationRequestDTO.Page < 1 || paginationRequestDTO.Page > totalPages)
             {
@@ -32,9 +33,9 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             }
 
             var paginatedQuery = entities
-                //.Skip((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)
-                //.Take(paginationRequestDTO.PageSize);
-                .Take(((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)..paginationRequestDTO.PageSize);
+                .Skip((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)
+                .Take(paginationRequestDTO.PageSize);
+                //.Take(((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)..paginationRequestDTO.PageSize);
 
             var response = new PaginationResponseDTO<T>()
             {
