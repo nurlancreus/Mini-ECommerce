@@ -15,6 +15,8 @@ using Amazon.S3;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Token;
+using Mini_ECommerce.Application.Abstractions.Services.Application;
+using Mini_ECommerce.Infrastructure.Concretes.Services.Application;
 
 namespace Mini_ECommerce.Infrastructure
 {
@@ -27,6 +29,7 @@ namespace Mini_ECommerce.Infrastructure
             services.AddScoped<IAppTokenHandler, AppTokenHandler>();
             services.AddScoped<IPaginationService, PaginationService>();
             services.AddScoped<IMailService, MailService>();
+            services.AddScoped<IApplicationService, ApplicationService>();
 
             return services;
         }
