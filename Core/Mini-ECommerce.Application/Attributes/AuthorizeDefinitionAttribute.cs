@@ -12,6 +12,7 @@ namespace Mini_ECommerce.Application.Attributes
         public AuthorizedMenu Menu { get; set; }
         public string Definition { get; set; }
         public ActionType ActionType { get; set; }
+        public Role[] Roles { get; set; } = [];
 
     }
 }
