@@ -10,7 +10,8 @@ namespace Mini_ECommerce.Application.Exceptions
 {
     public class EntityNotFoundException : BaseException
     {
-        public string EntityName { get; }
+        public string? EntityName { get; }
+        public string? EntityId { get; }
 
         public EntityNotFoundException(string entityName)
             : base($"The entity '{entityName}' was not found.")
@@ -18,22 +19,24 @@ namespace Mini_ECommerce.Application.Exceptions
             EntityName = entityName;
         }
 
-        public EntityNotFoundException(string entityName, string customMessage)
-            : base(HttpStatusCode.NotFound, customMessage)
-        {
-            EntityName = entityName;
-        }
+        //public EntityNotFoundException(string entityName, string customMessage)
+        //    : base(HttpStatusCode.NotFound, customMessage)
+        //{
+        //    EntityName = entityName;
+        //}
 
-        public EntityNotFoundException(string entityName, int entityId)
+        public EntityNotFoundException(string entityName, string entityId)
             : base(HttpStatusCode.NotFound, $"The entity '{entityName}' with ID '{entityId}' was not found.")
         {
             EntityName = entityName;
+            EntityId = entityId;
         }
 
-        public EntityNotFoundException(string entityName, int entityId, string customMessage)
+        public EntityNotFoundException(string entityName, string entityId, string customMessage)
             : base(HttpStatusCode.NotFound, customMessage)
         {
             EntityName = entityName;
+            EntityId = entityId;
         }
 
         public EntityNotFoundException(string? message, Exception? innerException) : base(message, innerException)
