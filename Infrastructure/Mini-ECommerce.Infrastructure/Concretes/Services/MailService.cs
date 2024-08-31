@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.DTOs.Customer;
 using System;
 using System.Net;
 using System.Net.Mail;
@@ -77,15 +78,15 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
             return mail.ToString();
         }
 
-        public async Task SendCompletedOrderMailAsync(string to, string orderCode, DateTime orderDate, string userName)
+        public async Task SendCompletedOrderMailAsync(string orderCode, DateTime orderDate, GetCustomerDTO customerDTO)
         {
-            string body = BuildCompletedOrderEmailBody(orderCode, orderDate, userName);
-            await SendMailAsync(to, $"Your Order #{orderCode} is Completed", body);
+            string body = BuildCompletedOrderEmailBody(orderCode, orderDate, customerDTO.UserName, customerDTO.FirstName, customerDTO.LastName);
+            await SendMailAsync(customerDTO.Email, $"Your Order #{orderCode} is Completed", body);
         }
 
-        private string BuildCompletedOrderEmailBody(string orderCode, DateTime orderDate, string userName)
+        private static string BuildCompletedOrderEmailBody(string orderCode, DateTime orderDate, string userName, string firstName, string lastName)
         {
-            return $"Dear {userName},<br>Your order with code {orderCode} placed on {orderDate:MMMM dd, yyyy} has been completed and handed over to the shipping company.<br>Thank you for shopping with us!";
+            return $"Dear {firstName} {lastName} ({userName}),<br>Your order with code {orderCode} placed on {orderDate:MMMM dd, yyyy} has been completed and handed over to the shipping company.<br>Thank you for shopping with us!";
         }
     }
 }

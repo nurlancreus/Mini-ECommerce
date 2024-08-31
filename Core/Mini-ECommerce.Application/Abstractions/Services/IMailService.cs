@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Mini_ECommerce.Application.DTOs.Customer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,6 @@ namespace Mini_ECommerce.Application.Abstractions.Services
         Task SendMailAsync(string[] tos, string subject, string body, bool isBodyHtml = true);
 
         Task SendPasswordResetMailAsync(string to, string userId, string resetToken);
-        Task SendCompletedOrderMailAsync(string to, string orderCode, DateTime orderDate, string userName);
+        Task SendCompletedOrderMailAsync(string orderCode, DateTime orderDate, GetCustomerDTO customerDTO);
     }
 }
