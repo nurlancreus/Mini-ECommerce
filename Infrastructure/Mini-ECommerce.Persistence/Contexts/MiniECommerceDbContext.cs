@@ -19,8 +19,25 @@ namespace Mini_ECommerce.Persistence.Contexts
         {
             modelBuilder
             .Entity<AppFile>()
-          .Property(p => p.Storage)
+            .Property(p => p.Storage)
             .HasConversion<string>();
+
+            modelBuilder
+            .Entity<AppEndpoint>()
+            .Property(e => e.Menu)
+            .HasConversion<string>();
+
+            modelBuilder
+            .Entity<AppEndpoint>()
+            .Property(e => e.Action)
+            .HasConversion<string>();
+
+            modelBuilder
+            .Entity<AppEndpoint>()
+            .Property(e => e.HttpMethod)
+            .HasConversion<string>();
+
+
 
             //     modelBuilder.Entity<Product>()
             //.HasMany(e => e.ProductImageFiles)
@@ -104,5 +121,6 @@ namespace Mini_ECommerce.Persistence.Contexts
         public DbSet<Basket> Baskets { get; set; }
         public DbSet<BasketItem> BasketItems { get; set; }
         public DbSet<CompletedOrder> CompletedOrders { get; set; }
+        public DbSet<AppEndpoint> AppEndpoints { get; set; }
     }
 }
