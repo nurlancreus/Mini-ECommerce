@@ -1,4 +1,4 @@
-﻿using Mini_ECommerce.Application.Enums;
+﻿using Mini_ECommerce.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -117,11 +117,6 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             // Deconstruct the result
             var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = await GetPaginatedOrdersAsync(page, size);
 
-            //FIX THE ERROR, WHEN USING PAGINATED QUERY IT WON'T INCLUDES
-           var query = paginatedQuery;
-            var query1 = _orderReadRepository.Table.Skip((page - 1) * pageSize).Take(size);
-            // var query = _orderReadRepository.GetAll(false);
-
             var orders = await paginatedQuery
                 .Include(o => o.Address)
                 .Include(o => o.Basket)

@@ -2,7 +2,7 @@
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.DTOs.Pagination;
 using Mini_ECommerce.Application.DTOs.Role;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
@@ -84,15 +84,20 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         public async Task<GetAllRolesDTO> GetAllRolesAsync(int page, int size)
         {
             var query = _roleManager.Roles;
+            int count = query.Count();
 
-            var paginationRequest = new PaginationRequestDTO()
+            if (!(page == -1 && size == -1))
             {
-                Page = page,
-                PageSize = size
-            };
+                var paginationRequest = new PaginationRequestDTO()
+                {
+                    Page = page,
+                    PageSize = size
+                };
 
-            var (count, _, _, _, paginatedQuery) = await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
+                (count, _, _, _, IQueryable<AppRole> paginatedQuery) = await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
 
+                query = paginatedQuery;
+            }
 
             return new GetAllRolesDTO()
             {
