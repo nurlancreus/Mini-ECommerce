@@ -6,7 +6,7 @@ using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Attributes;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Exceptions.Base;
 using Mini_ECommerce.Application.Features.Commands.Product.CreateProduct;

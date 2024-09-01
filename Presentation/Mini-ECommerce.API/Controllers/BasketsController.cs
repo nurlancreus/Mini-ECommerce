@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mini_ECommerce.Application.Attributes;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Features.Commands.Basket.AddItemToBasket;
 using Mini_ECommerce.Application.Features.Commands.Basket.RemoveItemFromBasket;
 using Mini_ECommerce.Application.Features.Commands.Basket.UpdateItemQuantity;

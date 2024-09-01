@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Mini_ECommerce.Application.Attributes;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Features.Commands.Order.CompleteOrder;
 using Mini_ECommerce.Application.Features.Commands.Order.CreateOrder;
 using Mini_ECommerce.Application.Features.Queries.Order.GetAllCustomers;

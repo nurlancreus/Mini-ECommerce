@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Mini_ECommerce.Application.Attributes;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Features.Commands.Role.CreateRole;
 using Mini_ECommerce.Application.Features.Commands.Role.DeleteRole;
 using Mini_ECommerce.Application.Features.Commands.Role.UpdateRole;
@@ -50,7 +50,7 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpPut("{Id}")]
         [AuthorizeDefinition(ActionType = ActionType.Updating, Definition = "Update Role", Menu = AuthorizedMenu.Roles)]
-        public async Task<IActionResult> UpdateRole([FromBody, FromRoute] UpdateRoleCommandRequest updateRoleCommandRequest)
+        public async Task<IActionResult> UpdateRole(UpdateRoleCommandRequest updateRoleCommandRequest)
         {
 
             var response = await _mediator.Send(updateRoleCommandRequest);
