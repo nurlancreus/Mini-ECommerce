@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Features.Commands.Role.UpdateRole;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;

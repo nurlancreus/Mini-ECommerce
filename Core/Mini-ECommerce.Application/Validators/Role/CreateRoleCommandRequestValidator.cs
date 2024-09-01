@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Mini_ECommerce.Application.Abstractions.Repositories;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Features.Commands.Role.CreateRole;
 using Mini_ECommerce.Domain.Entities.Identity;
