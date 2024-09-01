@@ -59,9 +59,9 @@ namespace Mini_ECommerce.Persistence
 
             services.AddScoped<IAuthEndpointService, AuthEndpointService>();
 
-            services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IExternalAuthService, ExternalAuthService>();
-            services.AddScoped<IInternalAuthService, InternalAuthService>();
+            services.AddScoped<IAuthManagementService, AuthService>();
+            services.AddScoped<IExternalAuthService, AuthService>();
+            services.AddScoped<IInternalAuthService, AuthService>();
 
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Abstractions.Services.Auth
 {
-    public interface IAuthService : IAuthManagementService, IInternalAuthService, IExternalAuthService
+    public interface IAuthManagementService
     {
-
+        Task ResetPasswordAsync(string email);
+        Task<bool> VerifyResetTokenAsync(string resetToken, string userId);
     }
 }
