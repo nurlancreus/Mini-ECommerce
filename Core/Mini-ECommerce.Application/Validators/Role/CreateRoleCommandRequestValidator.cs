@@ -23,14 +23,16 @@ namespace Mini_ECommerce.Application.Validators
 
             RuleFor(r => r.Name)
                 .NotEmpty().WithMessage("Role name is required.")
-                .Must(name => IsValidRoleName(name.Trim()))
+                .Must(IsValidRoleName)
                 .WithMessage("Roles must be defined in the application before being created.")
-                .MustAsync((name, cancellation) => IsUniqueRoleName(name.Trim(), cancellation))
+                .MustAsync(IsUniqueRoleName)
                 .WithMessage("A role with this name already exists.");
         }
 
         private bool IsValidRoleName(string name)
         {
+            if (name.Trim() != name) return false;
+
             return Enum.TryParse<Role>(name, true, out var roleEnumValue) && Enum.IsDefined(typeof(Role), roleEnumValue);
         }
 

@@ -33,7 +33,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             }
 
             // Check if the role name is defined in the Role enum
-            if (!Enum.TryParse<Role>(name.Trim(), true, out var roleEnumValue) || !Enum.IsDefined(typeof(Role), roleEnumValue))
+            if (!Enum.TryParse<Role>(name, true, out var roleEnumValue) || !Enum.IsDefined(typeof(Role), roleEnumValue) || name != name.Trim())
             {
                 throw new RoleException("Roles must be defined in the application before being created.");
             }
