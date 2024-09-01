@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.AuthEndpoint.AssignRoleEndpoint
 {
-    public class AssignRoleEndpointCommandResponse : IRequest<AssignRoleEndpointCommandRequest>
+    public class AssignRoleToEndpointCommandResponse : IRequest<AssignRoleToEndpointCommandRequest>
     {
         public bool Success { get; set; }
         public string? Message { get; set; }

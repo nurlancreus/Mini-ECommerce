@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.AuthEndpoint.AssignRoleEndpoint
 {
-    public class AssignRoleEndpointCommandHandler : IRequestHandler<AssignRoleEndpointCommandRequest, AssignRoleEndpointCommandResponse>
+    public class AssignRoleToEndpointCommandHandler : IRequestHandler<AssignRoleToEndpointCommandRequest, AssignRoleToEndpointCommandResponse>
     {
         private readonly IAuthEndpointService _authEndpointService;
 
-        public AssignRoleEndpointCommandHandler(IAuthEndpointService authEndpointService)
+        public AssignRoleToEndpointCommandHandler(IAuthEndpointService authEndpointService)
         {
             _authEndpointService = authEndpointService;
         }
 
-        public async Task<AssignRoleEndpointCommandResponse> Handle(AssignRoleEndpointCommandRequest request, CancellationToken cancellationToken)
+        public async Task<AssignRoleToEndpointCommandResponse> Handle(AssignRoleToEndpointCommandRequest request, CancellationToken cancellationToken)
         {
             var endpointCode = await _authEndpointService.AssignRoleEndpointAsync(request.Roles, request.Menu, request.Code, request.Type!);
 
-            return new AssignRoleEndpointCommandResponse()
+            return new AssignRoleToEndpointCommandResponse()
             {
                 Success = true,
-                Message = $"Roles have been added to the endpoint '{endpointCode}'"
+                Message = $"Roles have been modified on the endpoint '{endpointCode}'"
             };
         }
     }
