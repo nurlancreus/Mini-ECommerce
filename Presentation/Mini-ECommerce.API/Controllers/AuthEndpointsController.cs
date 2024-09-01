@@ -25,7 +25,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignRoleEndpoint(AssignRoleEndpointCommandRequest assignRoleEndpointCommandRequest)
+        public async Task<IActionResult> AssignRoleEndpoint(AssignRoleToEndpointCommandRequest assignRoleEndpointCommandRequest)
         {
             assignRoleEndpointCommandRequest.Type = typeof(Program);
 
