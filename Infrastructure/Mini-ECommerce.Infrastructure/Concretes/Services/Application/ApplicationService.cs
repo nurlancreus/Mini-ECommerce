@@ -52,13 +52,13 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
                         menus.Add(menu);
                     }
 
-                    var roles = new string[authorizeDefinitionAttribute.Roles.Length];
+                    //var roles = new string[authorizeDefinitionAttribute.Roles.Length];
 
-                    for (int i = 0; i < roles.Length; i++)
-                    {
-                        var role = authorizeDefinitionAttribute.Roles[i].ToString();
-                        roles[i] = role;
-                    }
+                    //for (int i = 0; i < roles.Length; i++)
+                    //{
+                    //    var role = authorizeDefinitionAttribute.Roles[i].ToString();
+                    //    roles[i] = role;
+                    //}
 
                     // Create ActionDTO based on attribute data
                     var actionDto = new ActionDTO
@@ -66,15 +66,15 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
                         ActionType = authorizeDefinitionAttribute.ActionType.ToString(),
                         Definition = authorizeDefinitionAttribute.Definition,
                         Method = GetHttpMethod(action).ToString(),
-                        Roles = roles
+                        // Roles = roles
                     };
 
                     var code = new StringBuilder($"{actionDto.Method}.{menu.Name}.{actionDto.ActionType}.{FormatDefinition(actionDto.Definition)}");
 
-                    if(actionDto.Roles.Length > 0)
-                    {
-                        code.Append($".{ string.Join(";", actionDto.Roles)}");
-                    }
+                    //if(actionDto.Roles.Length > 0)
+                    //{
+                    //    code.Append($".{ string.Join(";", actionDto.Roles)}");
+                    //}
 
                     // Generate a unique code for the action
                     actionDto.Code = code.ToString();

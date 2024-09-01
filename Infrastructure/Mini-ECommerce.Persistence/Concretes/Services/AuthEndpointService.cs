@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Application;
+using Mini_ECommerce.Application.DTOs.AuthEndpoint;
 using Mini_ECommerce.Application.DTOs.Role;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Helpers;
@@ -12,6 +13,7 @@ using Mini_ECommerce.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -41,21 +43,20 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
 
             // Parse code into its parts
             string[] codeParts = code.Split(".");
+
             if (codeParts.Length < 4)
-                throw new ArgumentException("Invalid code format. Expected format 'Method.Menu.Action.Definition.Role1;Role2;...'");
+                throw new ArgumentException("Invalid code format. Expected format 'Method.Menu.Action.Definition;...'");
 
             string methodType = codeParts[0];
             string menuName = codeParts[1];
             string actionType = codeParts[2];
             string definition = codeParts[3];
 
-            if (!menuName.Equals(menu, StringComparison.CurrentCultureIgnoreCase)) throw new InvalidOperationException($"Endpoint code '{code}' is not belongs to menu '{menu}'");
+            if (!menuName.Equals(menu, StringComparison.CurrentCultureIgnoreCase))
+                throw new InvalidOperationException($"Endpoint code '{code}' does not belong to menu '{menu}'");
 
             // Retrieve existing endpoint
-            AppEndpoint? endpoint = await _appEndpointReadRepository.GetSingleAsync(e => e.Code == code && e.Menu == menuValue);  
-
-            // Check if roles part is present in the code, handle null gracefully
-            List<string> endPointDefinedRoles = codeParts.Length > 4 ? [.. codeParts[4].Split(";")] : [];
+            AppEndpoint? endpoint = await _appEndpointReadRepository.Table.Include(e => e.Roles).FirstOrDefaultAsync(e => e.Code == code && e.Menu == menuValue);
 
             if (endpoint != null)
             {
@@ -63,18 +64,20 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 {
                     // If no roles are provided, remove all roles from the endpoint
                     endpoint.Roles.Clear();
-                    endPointDefinedRoles.Clear();
                 }
                 else
                 {
-                    // Update endpoint roles to match provided roles
+                    var rolesToBeRemoved = endpoint.Roles.Where(r => !roles.Contains(r.Name)).ToList();
+
+                    // Remove roles that are not in the provided list
+                    foreach (var role in rolesToBeRemoved)
+                    {
+                        endpoint.Roles.Remove(role);
+                    }
+
+                    // Add new roles if not already present
                     foreach (var roleName in roles)
                     {
-                        if (!endPointDefinedRoles.Contains(roleName))
-                        {
-                            endPointDefinedRoles.Add(roleName); // Add missing roles to the endpoint-defined roles
-                        }
-
                         if (!endpoint.Roles.Any(r => r.Name == roleName))
                         {
                             // Find role and add to endpoint if not present
@@ -82,51 +85,27 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                             endpoint.Roles.Add(role);
                         }
                     }
-
-                    // Remove roles from endpoint that are not in the provided roles list
-                    foreach (var roleName in endPointDefinedRoles.ToList()) // Clone list to avoid modifying while iterating
-                    {
-                        if (!roles.Contains(roleName))
-                        {
-                            var roleToRemove = endpoint.Roles.FirstOrDefault(r => r.Name == roleName);
-                            if (roleToRemove != null)
-                            {
-                                endpoint.Roles.Remove(roleToRemove);
-                            }
-
-                            endPointDefinedRoles.Remove(roleName);
-                        }
-                    }
                 }
-
-                // Update the code with the synchronized roles or empty if no roles
-                string newCode = $"{methodType}.{menuName}.{actionType}.{definition}";
-                if (endPointDefinedRoles.Count > 0)
-                {
-                    newCode += $".{string.Join(";", endPointDefinedRoles)}";
-                }
-
-                endpoint.Code = newCode;
             }
             else
             {
                 // If endpoint does not exist, create a new one
                 endpoint = new AppEndpoint();
 
-                if (Enum.TryParse<MethodType>(methodType, out var parsedMethod) &&
-                    Enum.TryParse<AuthorizedMenu>(menu, out var parsedMenu) &&
-                    Enum.TryParse<ActionType>(actionType, out var parsedAction))
+                if (EnumHelpers.TryParseEnum(methodType, out MethodType parsedMethod) &&
+                    EnumHelpers.TryParseEnum(actionType, out ActionType parsedAction))
                 {
-                    endpoint.Menu = parsedMenu;
+                    endpoint.Menu = menuValue;  // Use parsed menuValue here
                     endpoint.HttpMethod = parsedMethod;
                     endpoint.Action = parsedAction;
+                    endpoint.Definition = definition;
                 }
                 else
                 {
                     throw new InvalidOperationException("Values cannot be parsed to enum");
                 }
 
-                endpoint.Roles = [];
+                endpoint.Roles = new List<AppRole>();
 
                 // Add roles to new endpoint
                 foreach (var roleName in roles)
@@ -135,10 +114,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                     endpoint.Roles.Add(role);
                 }
 
-                // Set code for new endpoint, include roles if provided
-                endpoint.Code = roles.Length > 0
-                    ? $"{methodType}.{menuName}.{actionType}.{definition}.{string.Join(";", roles)}"
-                    : $"{methodType}.{menuName}.{actionType}.{definition}";
+                // Set code for new endpoint
+                endpoint.Code = $"{methodType}.{menuName}.{actionType}.{definition}";
 
                 await _appEndpointWriteRepository.AddAsync(endpoint);
             }
@@ -149,7 +126,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             return endpoint.Code;
         }
 
-        public async Task<List<GetRoleDTO>> GetRolesToEndpointAsync(string code, string menu)
+        public async Task<GetAuthEndpointDTO> GetRolesToEndpointAsync(string code, string menu)
         {
             if (!EnumHelpers.TryParseEnum(menu, out AuthorizedMenu menuValue))
             {
@@ -165,11 +142,15 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 throw new EntityNotFoundException(nameof(endpoint));
             }
 
-            return endpoint.Roles.Select(r => new GetRoleDTO
+            return new GetAuthEndpointDTO()
             {
-                Name = r.Name!,
-                Id = r.Id
-            }).ToList();
+                Code = code,
+                Roles = endpoint.Roles.Select(r => new GetRoleDTO()
+                {
+                    Id = r.Id,
+                    Name = r.Name!
+                }).ToList()
+            };
         }
     }
 }
