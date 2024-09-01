@@ -10,16 +10,16 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.ResetPassword
 {
     public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommandRequest, ResetPasswordCommandResponse>
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthManagementService _authService;
 
-        public ResetPasswordCommandHandler(IAuthService authService)
+        public ResetPasswordCommandHandler(IAuthManagementService authService)
         {
             _authService = authService;
         }
 
         public async Task<ResetPasswordCommandResponse> Handle(ResetPasswordCommandRequest request, CancellationToken cancellationToken)
         {
-            await _authService.ResetPasswordAsnyc(request.Email);
+            await _authService.ResetPasswordAsync(request.Email);
 
             return new ResetPasswordCommandResponse()
             {

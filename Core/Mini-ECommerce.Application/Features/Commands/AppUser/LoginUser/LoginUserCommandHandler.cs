@@ -11,16 +11,16 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommandRequest, LoginUserCommandResponse>
     {
 
-        private readonly IInternalAuthService _internalAuthService;
+        private readonly IInternalAuthService _authService;
 
-        public LoginUserCommandHandler(IInternalAuthService internalAuthService)
+        public LoginUserCommandHandler(IInternalAuthService authService)
         {
-            _internalAuthService = internalAuthService;
+            _authService = authService;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommandRequest request, CancellationToken cancellationToken)
         {
-            var response = await _internalAuthService.LoginAsync(new()
+            var response = await _authService.LoginAsync(new()
             {
                 Email = request.Email,
                 Password = request.Password,

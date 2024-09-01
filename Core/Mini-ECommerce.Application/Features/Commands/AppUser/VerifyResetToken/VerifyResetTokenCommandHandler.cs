@@ -10,9 +10,9 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.VerifyResetToken
 {
     public class VerifyResetTokenCommandHandler : IRequestHandler<VerifyResetTokenCommandRequest, VerifyResetTokenCommandResponse>
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthManagementService _authService;
 
-        public VerifyResetTokenCommandHandler(IAuthService authService)
+        public VerifyResetTokenCommandHandler(IAuthManagementService authService)
         {
             _authService = authService;
         }

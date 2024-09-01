@@ -16,17 +16,17 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.GoogleLoginUser
 {
     public class GoogleLoginUserCommandHandler : IRequestHandler<GoogleLoginUserCommandRequest, GoogleLoginUserCommandResponse>
     {
-        private readonly IExternalAuthService _externalAuthService;
+        private readonly IExternalAuthService _authService;
 
-        public GoogleLoginUserCommandHandler(IExternalAuthService externalAuthService)
+        public GoogleLoginUserCommandHandler(IExternalAuthService authService)
         {
-            _externalAuthService = externalAuthService;
+            _authService = authService;
         }
 
         public async Task<GoogleLoginUserCommandResponse> Handle(GoogleLoginUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var token = await _externalAuthService.GoogleLoginAsync(request.IdToken, nameof(ExternalLoginProvider));
+            var token = await _authService.GoogleLoginAsync(request.IdToken, nameof(ExternalLoginProvider));
 
             return new GoogleLoginUserCommandResponse()
             {

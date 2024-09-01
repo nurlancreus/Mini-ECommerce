@@ -19,17 +19,17 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.FacebookLoginUser
 {
     public class FacebookLoginUserCommandHandler : IRequestHandler<FacebookLoginUserCommandRequest, FacebookLoginUserCommandResponse>
     {
-        private readonly IExternalAuthService _externalAuthService;
+        private readonly IExternalAuthService _authService;
 
-        public FacebookLoginUserCommandHandler(IExternalAuthService externalAuthService)
+        public FacebookLoginUserCommandHandler(IExternalAuthService authService)
         {
-            _externalAuthService = externalAuthService;
+            _authService = authService;
         }
 
         public async Task<FacebookLoginUserCommandResponse> Handle(FacebookLoginUserCommandRequest request, CancellationToken cancellationToken)
         {
 
-            var token = await _externalAuthService.FacebookLoginAsync(request.AuthToken, nameof(ExternalLoginProvider.Facebook));
+            var token = await _authService.FacebookLoginAsync(request.AuthToken, nameof(ExternalLoginProvider.Facebook));
 
             return new FacebookLoginUserCommandResponse()
             {

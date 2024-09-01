@@ -11,16 +11,16 @@ namespace Mini_ECommerce.Application.Features.Commands.AppUser.RefreshTokenLogin
 {
     public class RefreshTokenLoginCommandHandler : IRequestHandler<RefreshTokenLoginCommandRequest, RefreshTokenLoginCommandResponse>
     {
-        readonly IInternalAuthService _internalAuthService;
+        readonly IInternalAuthService _authService;
 
-        public RefreshTokenLoginCommandHandler(IInternalAuthService internalAuthService)
+        public RefreshTokenLoginCommandHandler(IInternalAuthService authService)
         {
-            _internalAuthService = internalAuthService;
+            _authService = authService;
         }
 
         public async Task<RefreshTokenLoginCommandResponse> Handle(RefreshTokenLoginCommandRequest request, CancellationToken cancellationToken)
         {
-            TokenDTO token = await _internalAuthService.RefreshTokenLoginAsync(request.AccessToken, request.RefreshToken);
+            TokenDTO token = await _authService.RefreshTokenLoginAsync(request.AccessToken, request.RefreshToken);
 
             return new()
             {
