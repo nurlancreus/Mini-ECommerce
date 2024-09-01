@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.ViewModels.AuthEndpoint;
 using Mini_ECommerce.Application.ViewModels.Role;
 using System;
 using System.Collections.Generic;
@@ -25,11 +26,15 @@ namespace Mini_ECommerce.Application.Features.Queries.AuthEndpoint.GetRolesAssig
             return new GetRolesAssignedToEndpointQueryResponse()
             {
                 Success = true,
-                Roles = result.Select(r => new GetRoleVM()
+                Endpoint = new GetAuthEndpointVM()
                 {
-                    Id = r.Id,
-                    Name = r.Name,
-                }).ToList(),
+                    Code = result.Code,
+                    Roles = result.Roles.Select(r => new GetRoleVM()
+                    {
+                        Id = r.Id,
+                        Name = r.Name,
+                    }).ToList(),
+                }
             };
         }
     }

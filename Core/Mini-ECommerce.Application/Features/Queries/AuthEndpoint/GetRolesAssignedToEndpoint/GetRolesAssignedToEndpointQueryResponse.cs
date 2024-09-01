@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.ViewModels.AuthEndpoint;
 using Mini_ECommerce.Application.ViewModels.Role;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ namespace Mini_ECommerce.Application.Features.Queries.AuthEndpoint.GetRolesAssig
     public class GetRolesAssignedToEndpointQueryResponse : IRequest<GetRolesAssignedToEndpointQueryRequest>
     {
         public bool Success { get; set; }
-        public List<GetRoleVM> Roles { get; set; }
+        public GetAuthEndpointVM Endpoint { get; set; }
         public string? Message { get; set; }
     }
 }
