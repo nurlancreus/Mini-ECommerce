@@ -49,10 +49,15 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
 
             services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
-            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
+            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>(); 
+
+            services.AddScoped<IAppEndpointReadRepository, AppEndpointReadRepository>();
+            services.AddScoped<IAppEndpointWriteRepository, AppEndpointWriteRepository>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+
+            services.AddScoped<IAuthEndpointService, AuthEndpointService>();
 
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IExternalAuthService, ExternalAuthService>();
