@@ -10,5 +10,6 @@ namespace Mini_ECommerce.Domain.Entities.Identity
 {
     public class AppRole : IdentityRole, IBase
     {
+        public ICollection<AppEndpoint> Endpoints { get; set; }
     }
 }
