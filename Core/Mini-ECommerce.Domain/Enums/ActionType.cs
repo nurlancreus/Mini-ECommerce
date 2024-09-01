@@ -4,11 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mini_ECommerce.Application.Enums
+namespace Mini_ECommerce.Domain.Enums
 {
-    public enum Role
+    public enum ActionType
     {
-        Admin,
-        User,
+        Reading,
+        Writing,
+        Updating,
+        Deleting
     }
 }

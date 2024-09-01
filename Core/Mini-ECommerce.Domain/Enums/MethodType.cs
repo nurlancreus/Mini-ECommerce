@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mini_ECommerce.Application.Enums
+namespace Mini_ECommerce.Domain.Enums
 {
     public enum MethodType
     {
