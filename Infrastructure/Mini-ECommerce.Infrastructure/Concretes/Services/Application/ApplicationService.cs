@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Mini_ECommerce.Application.Abstractions.Services.Application;
 using Mini_ECommerce.Application.Attributes;
 using Mini_ECommerce.Application.DTOs.Configuration;
-using Mini_ECommerce.Application.Enums;
+using Mini_ECommerce.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -69,7 +69,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
                         Roles = roles
                     };
 
-                    var code = new StringBuilder($"\"{actionDto.Method}.{actionDto.ActionType}.{FormatDefinition(actionDto.Definition)}");
+                    var code = new StringBuilder($"{actionDto.Method}.{menu.Name}.{actionDto.ActionType}.{FormatDefinition(actionDto.Definition)}");
 
                     if(actionDto.Roles.Length > 0)
                     {
