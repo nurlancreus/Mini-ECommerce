@@ -9,6 +9,7 @@ namespace Mini_ECommerce.Domain.Enums
     public enum AuthorizedMenu
     {
         Application,
+        Users,
         Roles,
         Products,
         Baskets,
