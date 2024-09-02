@@ -3,10 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
+using Mini_ECommerce.Application.DTOs.Pagination;
 using Mini_ECommerce.Application.DTOs.User;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Extensions;
-using Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser;
+using Mini_ECommerce.Application.Features.Commands.User.RegisterUser;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -22,15 +23,17 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
+        private readonly IPaginationService _paginationService;
 
         public int TotalUsersCount => throw new NotImplementedException();
 
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration)
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration, IPaginationService paginationService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenHandler = tokenHandler;
             _configuration = configuration;
+            _paginationService = paginationService;
         }
 
         public async Task<RegisterUserResponseDTO> RegisterUserAsync(RegisterUserRequestDTO userRequestDTO)
@@ -95,9 +98,31 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             }
         }
 
-        public Task<List<GetAppUserDTO>> GetAllUsersAsync(int page, int size)
+        public async Task<GetAllUsersDTO> GetAllUsersAsync(int page, int size)
         {
-            throw new NotImplementedException();
+            var query = _userManager.Users;
+
+            var paginationRequest = new PaginationRequestDTO()
+            {
+                Page = page,
+                PageSize = size
+            };
+
+            var (totalItems, pageSize, currentPage, totalPages, paginatedQuery) = await _paginationService.ConfigurePaginationAsync(paginationRequest, query);
+
+            return new GetAllUsersDTO()
+            {
+                Users = [.. paginatedQuery.Select(u => new GetAppUserDTO ()
+            {
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email!,
+                UserName = u.UserName!
+            })],
+                CurrentPage = currentPage,
+                TotalPagesCount = totalPages,
+                TotalUserCount = totalItems,
+            };
         }
 
         public Task AssignRoleToUserAsnyc(string userId, string[] roles)

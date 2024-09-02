@@ -13,7 +13,7 @@ namespace Mini_ECommerce.Application.Abstractions.Services
         Task<RegisterUserResponseDTO> RegisterUserAsync(RegisterUserRequestDTO userRequestDTO);
         Task UpdateRefreshTokenAsync(string refreshToken, AppUser user, DateTime accessTokenLifeTime);
         Task UpdatePasswordAsync(string userId, string resetToken, string newPassword);
-        Task<List<GetAppUserDTO>> GetAllUsersAsync(int page, int size);
+        Task<GetAllUsersDTO> GetAllUsersAsync(int page, int size);
         int TotalUsersCount { get; }
         Task AssignRoleToUserAsnyc(string userId, string[] roles);
         Task<string[]> GetRolesToUserAsync(string userIdOrName);
