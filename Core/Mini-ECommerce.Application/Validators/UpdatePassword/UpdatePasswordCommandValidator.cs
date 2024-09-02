@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Mini_ECommerce.Application.Features.Commands.AppUser.UpdatePassword;
+using Mini_ECommerce.Application.Features.Commands.User.UpdatePassword;
 using System;
 using System.Collections.Generic;
 using System.Linq;

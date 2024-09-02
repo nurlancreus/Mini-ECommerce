@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Mini_ECommerce.Application.Features.Commands.AppUser.LoginUser;
+using Mini_ECommerce.Application.Features.Commands.User.LoginUser;
 using System;
 using System.Collections.Generic;
 using System.Linq;

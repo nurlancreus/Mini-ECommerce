@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Mini_ECommerce.Application.Abstractions.Repositories;
-using Mini_ECommerce.Application.Features.Commands.AppUser.RegisterUser;
+using Mini_ECommerce.Application.Features.Commands.User.RegisterUser;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
