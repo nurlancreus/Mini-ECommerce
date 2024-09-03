@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mini_ECommerce.Application.Helpers;
 
 namespace Mini_ECommerce.Application.Validators
 {
@@ -33,7 +34,7 @@ namespace Mini_ECommerce.Application.Validators
         {
             if (name.Trim() != name) return false;
 
-            return Enum.TryParse<Role>(name, true, out var roleEnumValue) && Enum.IsDefined(typeof(Role), roleEnumValue);
+            return EnumHelpers.TryParseEnum(name, out Role _) && EnumHelpers.IsDefinedEnum(name, out Role _);
         }
 
         private async Task<bool> IsUniqueRoleName(string name, CancellationToken cancellationToken)

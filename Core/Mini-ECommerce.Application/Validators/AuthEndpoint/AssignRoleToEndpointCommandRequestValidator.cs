@@ -27,11 +27,11 @@ namespace Mini_ECommerce.Application.Validators.AuthEndpoint
                 .Must(IsMenuExist)
                 .WithMessage("There is no such menu");
 
-            RuleFor(x => x.Roles)
+            RuleFor(e => e.Roles)
                 .MustAsync(ContainValidRolesAsync)
                 .WithMessage("Roles list contains invalid roles.");
 
-            RuleFor(x => x)
+            RuleFor(e => e)
                 .MustAsync(MenuMatchesCodeAsync)
                 .WithMessage("The menu provided does not match the menu in the code.");
         }

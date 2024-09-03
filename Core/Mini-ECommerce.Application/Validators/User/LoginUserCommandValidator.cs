@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mini_ECommerce.Application.Validators.AppUser
+namespace Mini_ECommerce.Application.Validators.User
 {
     public class LoginUserCommandValidator : AbstractValidator<LoginUserCommandRequest>
     {
