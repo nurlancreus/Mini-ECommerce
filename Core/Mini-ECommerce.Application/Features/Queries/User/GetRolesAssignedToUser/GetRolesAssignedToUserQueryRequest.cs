@@ -9,5 +9,6 @@ namespace Mini_ECommerce.Application.Features.Queries.User.GetRolesAssignedToUse
 {
     public class GetRolesAssignedToUserQueryRequest : IRequest<GetRolesAssignedToUserQueryResponse>
     {
+        public string Id { get; set; }
     }
 }

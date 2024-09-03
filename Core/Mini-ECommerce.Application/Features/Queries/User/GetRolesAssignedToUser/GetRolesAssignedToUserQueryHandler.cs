@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Abstractions.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,27 @@ namespace Mini_ECommerce.Application.Features.Queries.User.GetRolesAssignedToUse
 {
     public class GetRolesAssignedToUserQueryHandler : IRequestHandler<GetRolesAssignedToUserQueryRequest, GetRolesAssignedToUserQueryResponse>
     {
-        public Task<GetRolesAssignedToUserQueryResponse> Handle(GetRolesAssignedToUserQueryRequest request, CancellationToken cancellationToken)
+        private readonly IUserService _userService;
+
+        public GetRolesAssignedToUserQueryHandler(IUserService userService)
         {
-            throw new NotImplementedException();
+            _userService = userService;
+        }
+
+        public async Task<GetRolesAssignedToUserQueryResponse> Handle(GetRolesAssignedToUserQueryRequest request, CancellationToken cancellationToken)
+        {
+            var roles = await _userService.GetRolesAssignedToUserAsync(request.Id);
+
+            return new GetRolesAssignedToUserQueryResponse()
+            {
+                Success = true,
+                Roles = roles.Select(r => new ViewModels.Role.GetRoleVM()
+                {
+                    Id = r.Id,
+                    Name = r.Name,
+
+                }).ToList()
+            };
         }
     }
 }

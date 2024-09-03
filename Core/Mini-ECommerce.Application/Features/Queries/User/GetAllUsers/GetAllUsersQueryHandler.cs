@@ -27,6 +27,7 @@ namespace Mini_ECommerce.Application.Features.Queries.User.GetAllUsers
                 Success = true,
                 Users = result.Users.Select(u => new GetAppUserVM()
                 {
+                    Id = u.Id,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Email = u.Email,
