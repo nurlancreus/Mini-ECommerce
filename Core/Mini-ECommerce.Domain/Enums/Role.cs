@@ -8,6 +8,7 @@ namespace Mini_ECommerce.Domain.Enums
 {
     public enum Role
     {
+        SuperAdmin,
         Admin,
         User,
     }
