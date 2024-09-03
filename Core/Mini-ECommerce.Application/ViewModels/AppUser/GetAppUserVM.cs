@@ -8,6 +8,7 @@ namespace Mini_ECommerce.Application.ViewModels.AppUser
 {
     public class GetAppUserVM
     {
+        public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
