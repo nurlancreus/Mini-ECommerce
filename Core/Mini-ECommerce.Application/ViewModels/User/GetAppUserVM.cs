@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Mini_ECommerce.Application.ViewModels.AppUser
+namespace Mini_ECommerce.Application.ViewModels.User
 {
     public class GetAppUserVM
     {

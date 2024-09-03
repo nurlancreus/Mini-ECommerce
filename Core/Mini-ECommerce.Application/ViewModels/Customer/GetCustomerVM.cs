@@ -1,4 +1,4 @@
-﻿using Mini_ECommerce.Application.ViewModels.AppUser;
+﻿using Mini_ECommerce.Application.ViewModels.User;
 using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
