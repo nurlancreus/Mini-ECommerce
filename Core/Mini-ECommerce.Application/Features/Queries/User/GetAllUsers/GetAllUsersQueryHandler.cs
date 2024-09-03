@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Services;
-using Mini_ECommerce.Application.ViewModels.AppUser;
+using Mini_ECommerce.Application.ViewModels.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
