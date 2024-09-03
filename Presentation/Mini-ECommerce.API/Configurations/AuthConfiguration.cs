@@ -25,7 +25,8 @@ namespace Mini_ECommerce.API.Configurations
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
             LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null && expires > DateTime.UtcNow,
 
-            NameClaimType = ClaimTypes.Name // The value corresponding to the Name claim in the JWT can be obtained from the User.Identity.Name property.
+            NameClaimType = ClaimTypes.Name, // The value corresponding to the Name claim in the JWT can be obtained from the User.Identity.Name property.
+            RoleClaimType = ClaimTypes.Role
         };
     }));
         }

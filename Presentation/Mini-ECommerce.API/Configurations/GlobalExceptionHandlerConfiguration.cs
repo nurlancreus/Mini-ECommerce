@@ -2,7 +2,7 @@
 using System.Net.Mime;
 using System.Net;
 using System.Text.Json;
-using FluentValidation;  // Add this import to handle FluentValidation exceptions
+using FluentValidation;
 using Mini_ECommerce.Application.Exceptions.Base;
 
 namespace Mini_ECommerce.API.Configurations
@@ -27,38 +27,58 @@ namespace Mini_ECommerce.API.Configurations
 
                         if (exception is BaseException baseException)
                         {
-                            statusCode = baseException.StatusCode;  // Use the status code from the custom exception
-                            message = baseException.Message;        // Use the message from the custom exception
+                            statusCode = baseException.StatusCode;
+                            message = baseException.Message;
                         }
                         else if (exception is ValidationException validationException)
                         {
-                            statusCode = HttpStatusCode.BadRequest; // Set status code to 400 for validation errors
+                            statusCode = HttpStatusCode.BadRequest;
                             message = "Validation failed: " + string.Join("; ", validationException.Errors.Select(e => e.ErrorMessage));
                         }
                         else
                         {
                             statusCode = HttpStatusCode.InternalServerError;
-                            message = exception.Message; // Generic error message for other exceptions
+                            message = exception.Message;
                             track = exception.StackTrace ?? "";
                         }
 
-                        // Log the error
+                        // Collect all inner exceptions
+                        var innerExceptionMessages = GetInnerExceptionMessages(exception);
+                        if (innerExceptionMessages.Count > 0)
+                        {
+                            message += " | Inner Exceptions: " + string.Join(" | ", innerExceptionMessages);
+                        }
+
+                        // Log the error with inner exceptions
                         logger.LogError(exception, message);
 
-                        context.Response.StatusCode = (int)statusCode; // Set the response status code
+                        context.Response.StatusCode = (int)statusCode;
                         var response = new
                         {
-                            context.Response.StatusCode,
+                            StatusCode = context.Response.StatusCode,
                             Message = message,
                             Title = "Exception caught!",
-                            track,
+                            Track = track,
                         };
-
 
                         await context.Response.WriteAsync(JsonSerializer.Serialize(response));
                     }
                 });
             });
+        }
+
+        private static List<string> GetInnerExceptionMessages(Exception exception)
+        {
+            var messages = new List<string>();
+            var currentException = exception.InnerException;
+
+            while (currentException != null)
+            {
+                messages.Add(currentException.Message);
+                currentException = currentException.InnerException;
+            }
+
+            return messages;
         }
     }
 }
