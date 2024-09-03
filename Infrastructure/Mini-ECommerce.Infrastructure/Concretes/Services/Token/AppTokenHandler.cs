@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.Token;
@@ -17,10 +18,12 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
     public class AppTokenHandler : IAppTokenHandler
     {
         private readonly IConfiguration _configuration;
+        private readonly UserManager<AppUser> _userManager;
 
-        public AppTokenHandler(IConfiguration configuration)
+        public AppTokenHandler(IConfiguration configuration, UserManager<AppUser> userManager)
         {
             _configuration = configuration;
+            _userManager = userManager;
         }
 
         public TokenDTO CreateAccessToken(AppUser appUser)
@@ -38,6 +41,19 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             // Create the encrypted credentials.
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
+            List<Claim> claims =
+            [
+                new Claim(ClaimTypes.Name, appUser.UserName!)
+            ];
+
+            // Add role claims for the user.
+            var userRoles = _userManager.GetRolesAsync(appUser).Result;
+
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
             // Set the token's configurations.
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Audience"],
@@ -45,7 +61,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
                 expires: token.ExpirationDate,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials,
-                claims: [new Claim(ClaimTypes.Name, appUser.UserName)]
+                claims: claims
             );
 
             // Create an instance of the token handler class.
