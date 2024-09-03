@@ -9,9 +9,11 @@ using Mini_ECommerce.Application.Features.Commands.Order.CreateOrder;
 using Mini_ECommerce.Application.Features.Queries.Order.GetAllCustomers;
 using Mini_ECommerce.Application.Features.Queries.Order.GetAllOrders;
 using Mini_ECommerce.Application.Features.Queries.Order.GetOrderById;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mini_ECommerce.API.Controllers
 {
+    //[Authorize(AuthenticationSchemes = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrdersController : ControllerBase
@@ -23,6 +25,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Orders, ActionType = ActionType.Reading, Definition = "Get All Orders")]
         public async Task<ActionResult> GetAllOrders([FromQuery] GetAllOrdersQueryRequest getAllOrdersQueryRequest)
         {

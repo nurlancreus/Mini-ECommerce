@@ -22,6 +22,7 @@ using Mini_ECommerce.API.Configurations;
 using Serilog.Context;
 using Mini_ECommerce.API.Middlewares;
 using Mini_ECommerce.SignalR;
+using ETicaretAPI.API.Filters;
 
 namespace Mini_ECommerce.API
 {
@@ -54,7 +55,10 @@ namespace Mini_ECommerce.API
                 .AddInfrastructureServices()
                 .AddSignalRServices();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {   // Check role permissions
+                options.Filters.Add<RolePermissionFilter>();
+            });
 
             // builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
 

@@ -20,7 +20,7 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
-        [AuthorizeDefinition(Menu = AuthorizedMenu.Application, ActionType = ActionType.Reading, Definition = "Get Authorize Definition Endpoints")]
+        //[AuthorizeDefinition(Menu = AuthorizedMenu.Application, ActionType = ActionType.Reading, Definition = "Get Authorize Definition Endpoints")]
         public IActionResult Get()
         {
             var result = _applicationService.GetAuthorizeDefinitionEndpoints(typeof(Program));
