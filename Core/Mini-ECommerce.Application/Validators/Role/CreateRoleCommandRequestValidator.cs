@@ -33,8 +33,9 @@ namespace Mini_ECommerce.Application.Validators
         private bool IsValidRoleName(string name)
         {
             if (name.Trim() != name) return false;
+            // EnumHelpers.IsDefinedEnum(name, out Role _);
 
-            return EnumHelpers.TryParseEnum(name, out Role _) && EnumHelpers.IsDefinedEnum(name, out Role _);
+            return EnumHelpers.TryParseEnum(name, out Role _);
         }
 
         private async Task<bool> IsUniqueRoleName(string name, CancellationToken cancellationToken)
