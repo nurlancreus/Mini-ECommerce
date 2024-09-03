@@ -100,13 +100,13 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Application
         }
 
         // Helper method to capitalize each word in the string
-        private static string FormatDefinition(string input)
+        public static string FormatDefinition(string definition)
         {
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(definition))
                 return string.Empty;
 
             // Split the input string by spaces
-            var words = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var words = definition.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             // Capitalize each word using ToTitleCase
             var capitalizedWords = words.Select(word => CultureInfo.CurrentCulture.TextInfo.ToTitleCase(word.ToLower()));
