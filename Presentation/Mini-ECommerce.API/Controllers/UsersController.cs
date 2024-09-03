@@ -53,7 +53,7 @@ namespace Mini_ECommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("get-roles-to-user/{UserId}")]
+        [HttpGet("get-roles-to-user/{Id}")]
         // [Authorize(AuthenticationSchemes = "Admin")]
         [AuthorizeDefinition(ActionType = ActionType.Reading, Definition = "Get Roles To Users", Menu = AuthorizedMenu.Users)]
         public async Task<IActionResult> GetRolesToUser([FromRoute] GetRolesAssignedToUserQueryRequest getRolesToUserQueryRequest)
