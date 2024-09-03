@@ -13,5 +13,11 @@ namespace Mini_ECommerce.Application.Helpers
             // Use Enum.TryParse with ignoreCase = true for case-insensitive parsing
             return Enum.TryParse(value, ignoreCase: caseInsentitive, result: out result);
         }
+
+        public static bool IsDefinedEnum<T>(string value, out T result) where T : struct, Enum
+        {
+            result = default;
+            return Enum.IsDefined(typeof(T), value);
+        }
     }
 }
