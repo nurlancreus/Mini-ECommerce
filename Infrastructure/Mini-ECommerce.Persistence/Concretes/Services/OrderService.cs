@@ -28,13 +28,15 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly ICompletedOrderReadRepository _completedOrderReadRepository;
         private readonly ICompletedOrderWriteRepository _completedOrderWriteRepository;
 
-        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IPaginationService paginationService, IBasketReadRepository basketReadRepository, IBasketItemReadRepository basketItemReadRepository)
+        public OrderService(IOrderWriteRepository orderWriteRepository, IOrderReadRepository orderReadRepository, IPaginationService paginationService, IBasketReadRepository basketReadRepository, IBasketItemReadRepository basketItemReadRepository, ICompletedOrderReadRepository completedOrderReadRepository, ICompletedOrderWriteRepository completedOrderWriteRepository)
         {
             _orderWriteRepository = orderWriteRepository;
             _orderReadRepository = orderReadRepository;
             _paginationService = paginationService;
             _basketReadRepository = basketReadRepository;
             _basketItemReadRepository = basketItemReadRepository;
+            _completedOrderReadRepository = completedOrderReadRepository;
+            _completedOrderWriteRepository = completedOrderWriteRepository;
         }
 
         public async Task<(bool IsSuccess, CompletedOrderDTO? CompletedOrder)> CompleteOrderAsync(string id)
@@ -162,11 +164,12 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
 
         public async Task<List<GetCustomerDTO>> GetCustomersAsync(int page, int size)
         {
+
             var completedOrderIds = await _completedOrderReadRepository.Table
                 .Select(co => co.OrderId)
                 .ToListAsync();
 
-            var ordersQuery = _orderReadRepository.GetAll()
+            var ordersQuery = _orderReadRepository.GetAll(false)
                 .Where(o => completedOrderIds.Contains(o.Id))
                 .Include(o => o.Basket)
                 .ThenInclude(b => b.User)

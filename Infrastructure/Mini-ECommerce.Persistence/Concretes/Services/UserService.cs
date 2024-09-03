@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.Pagination;
@@ -29,7 +31,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         private readonly IAppTokenHandler _tokenHandler;
         private readonly IConfiguration _configuration;
         private readonly IPaginationService _paginationService;
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration, IPaginationService paginationService, RoleManager<AppRole> roleManager)
+        private readonly IAppEndpointReadRepository _appEndpointReadRepository;
+        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAppTokenHandler tokenHandler, IConfiguration configuration, IPaginationService paginationService, RoleManager<AppRole> roleManager, IAppEndpointReadRepository appEndpointReadRepository)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -37,6 +40,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             _tokenHandler = tokenHandler;
             _configuration = configuration;
             _paginationService = paginationService;
+            _appEndpointReadRepository = appEndpointReadRepository;
         }
 
         public async Task<RegisterUserResponseDTO> RegisterUserAsync(RegisterUserRequestDTO userRequestDTO)
@@ -230,11 +234,33 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             return roleDtos;
         }
 
-
-
-        public Task<bool> HasRolePermissionToEndpointAsync(string name, string code)
+        public async Task<bool> HasRolePermissionToEndpointAsync(string name, string code)
         {
-            throw new NotImplementedException();
+            var userRoles = await GetRolesAssignedToUserAsync(name);
+
+            var endpoint = await _appEndpointReadRepository.Table
+                      .Include(e => e.Roles)
+                      .FirstOrDefaultAsync(e => e.Code == code);
+
+            if (endpoint == null)
+                return false;
+
+            var endpointRoles = endpoint.Roles.Select(r => r.Name);
+
+            if (!endpointRoles.Any()) return true;
+
+            if (userRoles.Count == 0)
+                return false;
+
+
+            foreach (var userRole in userRoles)
+            {
+                foreach (var endpointRole in endpointRoles)
+                    if (userRole.Name == endpointRole)
+                        return true;
+            }
+
+            return false;
         }
     }
 }
