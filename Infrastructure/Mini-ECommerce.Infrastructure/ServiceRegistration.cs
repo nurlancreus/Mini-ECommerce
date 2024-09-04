@@ -30,6 +30,7 @@ namespace Mini_ECommerce.Infrastructure
             services.AddScoped<IPaginationService, PaginationService>();
             services.AddScoped<IMailService, MailService>();
             services.AddScoped<IApplicationService, ApplicationService>();
+            services.AddScoped<IQRCodeService, QRCodeService>();
 
             return services;
         }
