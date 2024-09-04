@@ -7,26 +7,27 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Exceptions.Base
 {
-    public class BaseException : Exception
+    public abstract class BaseException : Exception
     {
-        public HttpStatusCode StatusCode { get; set; } = HttpStatusCode.BadRequest;
+        public HttpStatusCode StatusCode { get; } = HttpStatusCode.BadRequest;
+        public string Description { get; }
 
-        public BaseException()
+        protected BaseException()
         {
             
         }
 
-        public BaseException(string message) : base(message)
+        protected BaseException(string message) : base(message)
         {
             
         }
 
-        public BaseException(HttpStatusCode httpStatusCode, string message) : base(message)
+        protected BaseException(HttpStatusCode httpStatusCode, string message) : base(message)
         {
             StatusCode = httpStatusCode;
         }
 
-        public BaseException(string? message, Exception? innerException) : base(message, innerException)
+        protected BaseException(string? message, Exception? innerException) : base(message, innerException)
         {
         }
     }
