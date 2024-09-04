@@ -9,5 +9,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.UpdateStockQrCode
 {
     public class UpdateStockQrCodeToProductCommandRequest : IRequest<UpdateStockQrCodeToProductCommandResponse>
     {
+        public string Id { get; set; }
+        public int Stock { get; set; }
     }
 }

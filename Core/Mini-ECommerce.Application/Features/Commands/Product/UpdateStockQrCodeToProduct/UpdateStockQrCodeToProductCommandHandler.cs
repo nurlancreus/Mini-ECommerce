@@ -10,18 +10,22 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.UpdateStockQrCode
 {
     public class UpdateStockQrCodeToProductCommandHandler : IRequestHandler<UpdateStockQrCodeToProductCommandRequest, UpdateStockQrCodeToProductCommandResponse>
     {
-        private readonly IQRCodeService _qRCodeService;
         private readonly IProductService _productService;
 
         public UpdateStockQrCodeToProductCommandHandler(IQRCodeService qRCodeService, IProductService productService)
         {
-            _qRCodeService = qRCodeService;
             _productService = productService;
         }
 
-        public Task<UpdateStockQrCodeToProductCommandResponse> Handle(UpdateStockQrCodeToProductCommandRequest request, CancellationToken cancellationToken)
+        public async Task<UpdateStockQrCodeToProductCommandResponse> Handle(UpdateStockQrCodeToProductCommandRequest request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _productService.StockUpdateToProductAsync(request.Id, request.Stock);
+
+            return new UpdateStockQrCodeToProductCommandResponse()
+            {
+                Success = true,
+                Message = "Product stocks updated successfully!"
+            };
         }
     }
 }
