@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.User.UpdatePassword
 {
-    public class UpdatePasswordCommandResponse : IRequest<UpdatePasswordCommandRequest>
+    public class UpdatePasswordCommandResponse : BaseResponse, IRequest<UpdatePasswordCommandRequest>
     {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
+
     }
 }

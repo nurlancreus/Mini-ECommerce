@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.User.AssignRoleToUser
 {
-    public class AssignRoleToUserCommandResponse : IRequest<AssignRoleToUserCommandRequest>
+    public class AssignRoleToUserCommandResponse : BaseResponse, IRequest<AssignRoleToUserCommandRequest>
     {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.Order.CreateOrder
 {
-    public class CreateOrderCommandResponse : IRequest<CreateOrderCommandRequest>
+    public class CreateOrderCommandResponse : BaseResponse, IRequest<CreateOrderCommandRequest>
     {
-        public bool Success { get; set; }
-        public string? Message { get; set; }
     }
 }
