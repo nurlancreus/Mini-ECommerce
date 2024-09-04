@@ -34,5 +34,8 @@
   <ItemGroup>
     <Folder Include="wwwroot\" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="..\..\Tests\Mini-ECommerce.IntegrationTests" />
+  </ItemGroup>
 
 </Project>
