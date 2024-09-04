@@ -25,7 +25,7 @@ namespace Mini_ECommerce.Persistence
         {
             //services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(Configuration.ConnectionString));
            
-            services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("PostgreSQL")));
+            services.AddDbContext<MiniECommerceDbContext>(options => options.UseNpgsql(configuration.GetConnectionString("Default")));
 
             services.AddScoped<IOrderReadRepository, OrderReadRepository>();
             services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
@@ -63,6 +63,7 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IExternalAuthService, AuthService>();
             services.AddScoped<IInternalAuthService, AuthService>();
 
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBasketService, BasketService>();
             services.AddScoped<IOrderService, OrderService>();
 
