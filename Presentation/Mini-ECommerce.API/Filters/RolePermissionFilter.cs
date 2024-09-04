@@ -25,6 +25,22 @@ namespace ETicaretAPI.API.Filters
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
+            if (context.ActionDescriptor is not ControllerActionDescriptor descriptor)
+            {
+                _logger.LogWarning("ControllerActionDescriptor is null. Proceeding to next action.");
+                await next();
+                return;
+            }
+
+            var attribute = descriptor.MethodInfo.GetCustomAttribute<AuthorizeDefinitionAttribute>();
+
+            if (attribute == null)
+            {
+                _logger.LogWarning("AuthorizeDefinitionAttribute is not found for action '{ActionName}'. Proceeding to next action.", descriptor.ActionName);
+                await next();
+                return;
+            }
+
             var name = context.HttpContext.User.Identity?.Name;
 
             // Check if the user is authenticated
@@ -39,22 +55,6 @@ namespace ETicaretAPI.API.Filters
             if (name == AdminUser)
             {
                 _logger.LogInformation("User '{UserName}' is an admin. Proceeding to next action.", name);
-                await next();
-                return;
-            }
-
-            if (context.ActionDescriptor is not ControllerActionDescriptor descriptor)
-            {
-                _logger.LogWarning("ControllerActionDescriptor is null. Proceeding to next action.");
-                await next();
-                return;
-            }
-
-            var attribute = descriptor.MethodInfo.GetCustomAttribute<AuthorizeDefinitionAttribute>();
-
-            if (attribute == null)
-            {
-                _logger.LogWarning("AuthorizeDefinitionAttribute is not found for action '{ActionName}'. Proceeding to next action.", descriptor.ActionName);
                 await next();
                 return;
             }
