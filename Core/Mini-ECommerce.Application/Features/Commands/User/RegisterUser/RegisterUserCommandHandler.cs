@@ -33,7 +33,7 @@ namespace Mini_ECommerce.Application.Features.Commands.User.RegisterUser
 
             return new RegisterUserCommandResponse()
             {
-                Message = response.Message,
+                Message = "User registered successfully",
                 Success = response.Success,
                 Token = response.Token
             };
