@@ -8,7 +8,7 @@ namespace Mini_ECommerce.Application.RequestParameters
 {
     public class PaginationParams
     {
-        public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 5;
+        public virtual int Page { get; set; } = 1;
+        public virtual int PageSize { get; set; } = 5;
     }
 }
