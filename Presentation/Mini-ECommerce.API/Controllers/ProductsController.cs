@@ -19,6 +19,9 @@ using Mini_ECommerce.Application.RequestParameters;
 using Mini_ECommerce.Domain.Entities;
 using Mini_ECommerce.Domain.Enums;
 using System.Net;
+using Mini_ECommerce.Persistence.Concretes.Services;
+using Mini_ECommerce.Application.Features.Commands.Product.UpdateStockQrCodeToProduct;
+using Mini_ECommerce.Application.Features.Queries.GetQrCodeToProduct;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -84,23 +87,38 @@ namespace Mini_ECommerce.API.Controllers
             return Created();
         }
 
-        [HttpPut]
+        [HttpPut("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
-        public async Task<IActionResult> Update(UpdateProductCommandRequest updateProductCommandRequest)
+        public async Task<IActionResult> Update([FromBody, FromRoute] UpdateProductCommandRequest updateProductCommandRequest)
         {
             await _mediator.Send(updateProductCommandRequest);
 
             return Created();
         }
 
-        [HttpDelete]
+        [HttpDelete("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
-        public async Task<IActionResult> Delete(RemoveProductCommandRequest removeProductCommandRequest)
+        public async Task<IActionResult> Delete([FromRoute] RemoveProductCommandRequest removeProductCommandRequest)
         {
             await _mediator.Send(removeProductCommandRequest);
 
             return NoContent();
 
+        }
+
+        [HttpGet("qrcode/{ProductId}")]
+        public async Task<IActionResult> GetQrCodeToProduct([FromRoute] GetQrCodeToProductQueryRequest getQrCodeToProductQueryRequest)
+        {
+            var response = await _mediator.Send(getQrCodeToProductQueryRequest);
+
+            return File(response.ImageData, "image/png");
+        }
+
+        [HttpPut("qrcode")]
+        public async Task<IActionResult> UpdateStockQrCodeToProduct(UpdateStockQrCodeToProductCommandRequest updateStockQrCodeToProductCommandRequest)
+        {
+            var response = await _mediator.Send(updateStockQrCodeToProductCommandRequest);
+            return Ok(response);
         }
 
         [HttpGet("[action]")]

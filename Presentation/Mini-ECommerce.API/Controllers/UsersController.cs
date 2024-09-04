@@ -14,6 +14,7 @@ using Mini_ECommerce.Application.Features.Queries.AuthEndpoint.GetRolesAssignedT
 using Mini_ECommerce.Application.Features.Queries.User.GetAllUsers;
 using Mini_ECommerce.Application.Features.Queries.User.GetRolesAssignedToUser;
 using Mini_ECommerce.Domain.Enums;
+using ETicaretAPI.API.Filters;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -21,16 +22,21 @@ namespace Mini_ECommerce.API.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly ILogger<UsersController> _logger;
         private readonly IMediator _mediator;
 
-        public UsersController(IMediator mediator)
+        public UsersController(IMediator mediator, ILogger<UsersController> logger)
         {
             _mediator = mediator;
+            _logger = logger;
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserCommandRequest registerUserCommandRequest)
         {
+            // Add logging here
+            _logger.LogInformation("Register endpoint hit");
+
             var response = await _mediator.Send(registerUserCommandRequest);
 
             return Ok(response);
