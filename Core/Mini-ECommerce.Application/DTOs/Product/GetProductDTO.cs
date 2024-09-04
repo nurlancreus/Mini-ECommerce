@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.DTOs.Product
 {
-    internal class GetProductDTO
+    public class GetProductDTO
     {
     }
 }
