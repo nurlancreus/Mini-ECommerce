@@ -157,7 +157,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             // Check if role removal was successful
             if (!removeResult.Succeeded)
             {
-                throw new BaseException("Cannot remove already assigned roles", new InvalidDataException());
+                throw new InvalidDataException("Cannot remove already assigned roles");
             }
 
             // Assign new roles
@@ -184,7 +184,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                     // Ensure that role addition was successful
                     if (!addResult.Succeeded)
                     {
-                        throw new BaseException($"Failed to add role '{roleName}' to user", new InvalidDataException());
+                        throw new InvalidDataException($"Failed to add role '{roleName}' to user");
                     }
                 }
             }
@@ -195,7 +195,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             // Check if the user update was successful
             if (!updateResult.Succeeded)
             {
-                throw new BaseException("Failed to update user after role assignments", new InvalidDataException());
+                throw new InvalidDataException("Failed to update user after role assignments");
             }
         }
 
