@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,23 +11,22 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.RemoveProduct
 {
     public class RemoveProductCommandHandler : IRequestHandler<RemoveProductCommandRequest, RemoveProductCommandResponse>
     {
-        private readonly IProductWriteRepository _productWriteRepository;
+        private readonly IProductService _productService;
 
-        public RemoveProductCommandHandler(IProductWriteRepository productWriteRepository)
+        public RemoveProductCommandHandler(IProductService productService)
         {
-            _productWriteRepository = productWriteRepository;
+            _productService = productService;
         }
 
         public async Task<RemoveProductCommandResponse> Handle(RemoveProductCommandRequest request, CancellationToken cancellationToken)
         {
-            bool isDeleted = await _productWriteRepository.RemoveAsync(request.Id);
+           await  _productService.DeleteProductAsync(request.Id);
 
-            if (!isDeleted)
+            return new RemoveProductCommandResponse()
             {
-                throw new Exception("Could not delete product");
-            }
-
-            return new RemoveProductCommandResponse();
+                Success = true,
+                Message = "Product removed successfully!"
+            };
         }
     }
 }

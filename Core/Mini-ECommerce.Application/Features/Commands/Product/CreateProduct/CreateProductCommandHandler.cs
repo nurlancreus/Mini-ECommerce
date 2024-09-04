@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Hubs;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
+using Mini_ECommerce.Application.DTOs.Product;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,30 +15,24 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.CreateProduct
     public class CreateProductCommandHandler : IRequestHandler<CreateProductCommandRequest, CreateProductCommandResponse>
     {
         private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IProductHubService _productHubService;
+        private readonly IProductService _productService;
 
-        public CreateProductCommandHandler(IProductWriteRepository productWriteRepository, IProductHubService productHubService)
+        public CreateProductCommandHandler(IProductWriteRepository productWriteRepository, IProductService productService)
         {
-            _productWriteRepository = productWriteRepository;
-            _productHubService = productHubService;
+            _productService = productService;
         }
 
         public async Task<CreateProductCommandResponse> Handle(CreateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            bool isAdded = await _productWriteRepository.AddAsync(new() { Name = request.Name, Price = request.Price, Stock = request.Stock });
 
-            if (!isAdded)
+            await _productService.CreateProductAsync(new CreateProductDTO()
             {
-                throw new Exception("Cannot add Product");
-            }
+                Name = request.Name,
+                Price = request.Price,
+                Stock = request.Stock,
+            });
 
-            await _productWriteRepository.SaveAsync();
-            await _productHubService.ProductAddedMessageAsync($"Product {request.Name} added.");
-
-
-            var response = new CreateProductCommandResponse() { Message = "Product Created Successfully!", };
-
-            return response;
+            return new CreateProductCommandResponse() { Success = true, Message = "Product Created Successfully!", };
         }
     }
 }

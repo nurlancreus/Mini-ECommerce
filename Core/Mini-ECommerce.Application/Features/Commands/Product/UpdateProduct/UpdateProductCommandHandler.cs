@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Exceptions;
 using System;
 using System.Collections.Generic;
@@ -11,33 +12,28 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.UpdateProduct
 {
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommandRequest, UpdateProductCommandResponse>
     {
-        readonly IProductReadRepository _productReadRepository;
-        readonly IProductWriteRepository _productWriteRepository;
+        private readonly IProductService _productService;
 
-        public UpdateProductCommandHandler(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository)
+        public UpdateProductCommandHandler(IProductService productService)
         {
-            _productReadRepository = productReadRepository;
-            _productWriteRepository = productWriteRepository;
+            _productService = productService;
         }
 
         public async Task<UpdateProductCommandResponse> Handle(UpdateProductCommandRequest request, CancellationToken cancellationToken)
         {
-            var product = await _productReadRepository.GetByIdAsync(request.Id!);
-
-            if (product == null)
+            await _productService.UpdateProductAsync(new DTOs.Product.UpdateProductDTO()
             {
-                throw new EntityNotFoundException(nameof(product), request.Id);
-            }
+                Id = request.Id,
+                Name = request.Name,
+                Price = request.Price,
+                Stock = request.Stock,
+            });
 
-            product.Name = request.Name;
-            product.Price = request.Price;
-            product.Stock = request.Stock;
-
-            await _productWriteRepository.SaveAsync();
-
-            var response = new UpdateProductCommandResponse() { Product = new() { Id = product.Id.ToString(), Name = product.Name, Price = product.Price, Stock = product.Stock, CreatedAt = product.CreatedAt, UpdatedAt = product.UpdatedAt } };
-
-            return response;
+            return new UpdateProductCommandResponse()
+            {
+                Success = true,
+                Message = "Product updated successfully!"
+            };
         }
     }
 }
