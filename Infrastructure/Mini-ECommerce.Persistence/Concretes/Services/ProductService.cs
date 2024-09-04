@@ -81,14 +81,18 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 product.Stock,
                 product.CreatedAt
             };
+
             string plainText = JsonSerializer.Serialize(plainObject);
 
             return await _qRCodeService.GenerateQRCodeAsync(plainText);
         }
 
-        public Task StockUpdateToProductAsync(string productId, int stock)
+        public async Task StockUpdateToProductAsync(string productId, int stock)
         {
-            throw new NotImplementedException();
+            Product product = await _productReadRepository.GetByIdAsync(productId) ?? throw new Exception("Product not found");
+
+            product.Stock = stock;
+            await _productWriteRepository.SaveAsync();
         }
 
     }
