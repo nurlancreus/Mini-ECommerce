@@ -1,5 +1,5 @@
-﻿using Mini_ECommerce.Application.ViewModels.Order;
-using Mini_ECommerce.Application.ViewModels.ProductImageFile;
+﻿using Mini_ECommerce.Application.ViewModels.File;
+using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
