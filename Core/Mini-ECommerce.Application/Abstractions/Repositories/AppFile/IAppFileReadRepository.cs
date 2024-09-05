@@ -1,4 +1,5 @@
-﻿using Mini_ECommerce.Domain.Entities;
+﻿using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
