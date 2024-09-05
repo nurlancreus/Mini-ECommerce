@@ -39,23 +39,25 @@ namespace Mini_ECommerce.Persistence
             services.AddScoped<IAppFileReadRepository, AppFileReadRepository>();
             services.AddScoped<IAppFileWriteRepository, AppFileWriteRepository>();
 
+            services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
+            services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
+
+            services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
+            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>();
+
             services.AddScoped<IBasketReadRepository, BasketReadRepository>();
             services.AddScoped<IBasketWriteRepository, BasketWriteRepository>();
             
             services.AddScoped<IBasketItemReadRepository, BasketItemReadRepository>();
             services.AddScoped<IBasketItemWriteRepository, BasketItemWriteRepository>();
 
-            services.AddScoped<IProductImageFileReadRepository, ProductImageFileReadRepository>();
-            services.AddScoped<IProductImageFileWriteRepository, ProductImageFileWriteRepository>();
-
-            services.AddScoped<IInvoiceFileReadRepository, InvoiceFileReadRepository>();
-            services.AddScoped<IInvoiceFileWriteRepository, InvoiceFileWriteRepository>(); 
-
             services.AddScoped<IAppEndpointReadRepository, AppEndpointReadRepository>();
             services.AddScoped<IAppEndpointWriteRepository, AppEndpointWriteRepository>();
 
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
+
+            services.AddScoped<IFileService, FileService>();
 
             services.AddScoped<IAuthEndpointService, AuthEndpointService>();
 

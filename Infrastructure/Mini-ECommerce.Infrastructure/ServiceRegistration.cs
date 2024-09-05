@@ -24,7 +24,6 @@ namespace Mini_ECommerce.Infrastructure
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
         {
-            // services.AddScoped<IFileService, FileService>();
             services.AddScoped<IStorageService, StorageService>();
             services.AddScoped<IAppTokenHandler, AppTokenHandler>();
             services.AddScoped<IPaginationService, PaginationService>();
