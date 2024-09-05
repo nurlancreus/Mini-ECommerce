@@ -2,7 +2,7 @@
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Exceptions;
-using Mini_ECommerce.Application.ViewModels.ProductImageFile;
+using Mini_ECommerce.Application.ViewModels.File;
 using Mini_ECommerce.Domain.Enums;
 using System;
 using System.Collections.Generic;
@@ -56,7 +56,7 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.UploadPr
                         //IsMain = counter == 1,
                         FileName = result.fileName,
                         Path = result.pathOrContainerName,
-                        Storage = Enum.Parse<StorageType>(_storageService.StorageName),
+                        Storage = _storageService.StorageName,
                         Products = [product]
                     };
                 }).ToList();
