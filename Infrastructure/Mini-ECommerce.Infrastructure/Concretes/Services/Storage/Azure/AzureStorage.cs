@@ -16,6 +16,16 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Azure
             throw new NotImplementedException();
         }
 
+        public Task<bool> DeleteFileUsingUrl(string url)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetFileUrl(string pathName)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<List<(string fileName, string pathOrContainerName)>> UploadAsync(string containerName, IFormFileCollection formFiles)
         {
             throw new NotImplementedException();
@@ -26,7 +36,7 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Azure
             throw new NotImplementedException();
         }
 
-        Task<List<string>> IStorage.GetFilesAsync(string containerName)
+        Task<List<(string fileName, string pathOrContainerName)>> IStorage.GetFilesAsync(string containerName)
         {
             throw new NotImplementedException();
         }

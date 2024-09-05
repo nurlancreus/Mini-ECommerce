@@ -29,10 +29,10 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
         }
 
 
-        public async Task<List<string>> GetFilesAsync(string path)
+        public async Task<List<(string fileName, string pathOrContainerName)>> GetFilesAsync(string path)
         {
             DirectoryInfo directory = new(Path.Combine(_webHostEnvironment.WebRootPath, path));
-            return await Task.FromResult(directory.GetFiles().Select(f => f.Name).ToList());
+            return await Task.FromResult(directory.GetFiles().Select(f => (f.Name, directory.Name)).ToList());
         }
 
         public async Task<bool> HasFileAsync(string path, string fileName)
@@ -91,6 +91,16 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.Local
         }
 
         Task IStorage.DeleteAllAsync(string pathOrContainerName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<string> GetFileUrl(string pathName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteFileUsingUrl(string url)
         {
             throw new NotImplementedException();
         }

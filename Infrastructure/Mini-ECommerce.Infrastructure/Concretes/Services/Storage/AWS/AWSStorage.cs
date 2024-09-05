@@ -30,6 +30,8 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
                 Key = key
             };
 
+            throw new Exception("test");
+
             await _s3Client.DeleteObjectAsync(deleteObjectRequest);
         }
 
@@ -64,9 +66,9 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
             } while (listObjectsResponse.IsTruncated); // Continue if there are more files to delete.
         }
 
-        public async Task<List<string>> GetFilesAsync(string pathOrContainerName)
+        public async Task<List<(string fileName, string pathOrContainerName)>> GetFilesAsync(string pathOrContainerName)
         {
-            var files = new List<string>();
+            var files = new List<(string fileName, string pathOrContainerName)>();
             var listObjectsRequest = new ListObjectsV2Request
             {
                 BucketName = _bucketName,
@@ -80,7 +82,11 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
                 // Ensure we're only getting files and not directories
                 if (!s3Object.Key.EndsWith("/"))
                 {
-                    files.Add(s3Object.Key);
+                    string[] pathAndName = s3Object.Key.Split('/');
+                    string fileName = pathAndName[^1];
+                    string path = pathAndName[0];
+
+                    files.Add((fileName, path));
                 }
             }
 
@@ -129,6 +135,16 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
             }
 
             return uploadedFiles;
+        }
+
+        public Task<string> GetFileUrl(string pathName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteFileUsingUrl(string url)
+        {
+            throw new NotImplementedException();
         }
     }
 }
