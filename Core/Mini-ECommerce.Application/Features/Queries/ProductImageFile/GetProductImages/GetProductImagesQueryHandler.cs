@@ -31,8 +31,8 @@ namespace Mini_ECommerce.Application.Features.Queries.ProductImageFile.GetProduc
 
             var response = new GetProductImagesQueryResponse()
             {
-                Images = product.ProductImageFiles.Select(i =>
-             new ViewModels.ProductImageFile.GetProductImageFileVM() { Id = i.Id, FileName = i.FileName, Path = i.Path, CreatedAt = i.CreatedAt }).ToList()
+                //Images = product.ProductImageFiles.Select(i =>
+             //new ViewModels.ProductImageFile.GetProductImageFileVM() { Id = i.Id, FileName = i.FileName, Path = i.Path, CreatedAt = i.CreatedAt }).ToList()
             };
 
             return response;

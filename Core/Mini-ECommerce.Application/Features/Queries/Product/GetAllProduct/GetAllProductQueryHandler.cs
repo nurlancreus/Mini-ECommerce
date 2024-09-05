@@ -6,6 +6,7 @@ using Mini_ECommerce.Application.DTOs.Pagination;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
+using Mini_ECommerce.Application.ViewModels.File;
 using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Application.ViewModels.Product;
 using System;
@@ -52,11 +53,11 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
                     Price = p.Price,
                     Stock = p.Stock,
                     CreatedAt = p.CreatedAt,
-                    ProductImageFiles = p.ProductProductImageFiles.Select(image => new ViewModels.ProductImageFile.GetProductImageFileVM
+                    ProductImageFiles = p.ProductProductImageFiles.Select(image => new GetProductImageFileVM
                     {
                         IsMain = image.IsMain,
                         FileName = image.ProductImageFile.FileName,
-                        Id = image.ProductImageFile.Id,
+                       // Id = image.ProductImageFile.Id,
                         Path = image.ProductImageFile.Path,
                         CreatedAt = image.ProductImageFile.CreatedAt
                     }).ToList()

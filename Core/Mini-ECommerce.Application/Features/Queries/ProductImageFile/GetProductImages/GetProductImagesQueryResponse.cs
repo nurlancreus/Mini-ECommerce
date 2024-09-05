@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Mini_ECommerce.Application.ViewModels.ProductImageFile;
+using Mini_ECommerce.Application.ViewModels.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
