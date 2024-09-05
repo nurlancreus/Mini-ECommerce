@@ -7,7 +7,6 @@ using Mini_ECommerce.Domain.Entities.Base;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Infrastructure.Concretes.Services
@@ -16,27 +15,32 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
     {
         public async Task<PaginationResponseDTO<T>> ConfigurePaginationAsync<T>(PaginationRequestDTO paginationRequestDTO, IQueryable<T> entities) where T : IBase
         {
-            var totalItems = await entities.CountAsync();
-
+            // Validate PageSize
             if (paginationRequestDTO.PageSize <= 0)
             {
                 throw new InvalidPaginationException(PaginationErrorType.InvalidPageSize, paginationRequestDTO.PageSize);
             }
 
+            // Get total items
+            var totalItems = await entities.CountAsync();
             var totalPages = (int)Math.Ceiling(totalItems / (double)paginationRequestDTO.PageSize);
 
+            // Adjust totalPages to be at least 1
             totalPages = totalPages == 0 ? 1 : totalPages;
 
+            // Validate PageNumber
             if (paginationRequestDTO.Page < 1 || paginationRequestDTO.Page > totalPages)
             {
                 throw new InvalidPaginationException(PaginationErrorType.InvalidPageNumber, paginationRequestDTO.Page);
             }
 
+            // Calculate pagination
+            var skip = (paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize;
             var paginatedQuery = entities
-                .Skip((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)
+                .Skip(skip)
                 .Take(paginationRequestDTO.PageSize);
-                //.Take(((paginationRequestDTO.Page - 1) * paginationRequestDTO.PageSize)..paginationRequestDTO.PageSize);
 
+            // Return Pagination response
             var response = new PaginationResponseDTO<T>()
             {
                 Page = paginationRequestDTO.Page,
@@ -48,6 +52,5 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services
 
             return response;
         }
-
     }
 }
