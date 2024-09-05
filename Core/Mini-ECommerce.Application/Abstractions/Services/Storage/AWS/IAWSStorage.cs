@@ -8,5 +8,6 @@ namespace Mini_ECommerce.Application.Abstractions.Services.Storage.AWS
 {
     public interface IAWSStorage : IStorage
     {
+  
     }
 }
