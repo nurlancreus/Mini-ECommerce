@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Exceptions;
+using Mini_ECommerce.Application.ViewModels.File;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,31 +13,32 @@ namespace Mini_ECommerce.Application.Features.Queries.ProductImageFile.GetProduc
 {
     public class GetProductImagesQueryHandler : IRequestHandler<GetProductImagesQueryRequest, GetProductImagesQueryResponse>
     {
-        private readonly IProductReadRepository _productReadRepository;
+        private readonly IProductService _productService;
 
-        public GetProductImagesQueryHandler(IProductReadRepository productReadRepository)
+        public GetProductImagesQueryHandler(IProductService productService)
         {
-            _productReadRepository = productReadRepository;
+            _productService = productService;
         }
 
         public async Task<GetProductImagesQueryResponse> Handle(GetProductImagesQueryRequest request, CancellationToken cancellationToken)
         {
-            var product = await _productReadRepository.GetByIdAsync(request.Id);
+            var result = await _productService.GetProductImages(request.Id, request.Page, request.PageSize);
 
-            if (product == null)
+            return new GetProductImagesQueryResponse()
             {
-                throw new EntityNotFoundException(nameof(product), request.Id);
-            }
-
-            await _productReadRepository.Table.Entry(product).Collection(p => p.ProductImageFiles).LoadAsync(cancellationToken);
-
-            var response = new GetProductImagesQueryResponse()
-            {
-                //Images = product.ProductImageFiles.Select(i =>
-             //new ViewModels.ProductImageFile.GetProductImageFileVM() { Id = i.Id, FileName = i.FileName, Path = i.Path, CreatedAt = i.CreatedAt }).ToList()
+                Page = result.CurrentPage,
+                PageSize = result.PageSize,
+                TotalItems = result.TotalItems,
+                TotalPages = result.PageCount,
+                Images = result.ProductImages.Select(pi => new GetProductImageFileVM ()
+                {
+                    Id = pi.Id,
+                    FileName = pi.FileName,
+                    Path = pi.Path,
+                    IsMain = pi.IsMain,
+                    CreatedAt = pi.CreatedAt,
+                }).ToList()
             };
-
-            return response;
         }
     }
 }

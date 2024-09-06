@@ -10,6 +10,10 @@ namespace Mini_ECommerce.Application.Features.Queries.ProductImageFile.GetProduc
 {
     public class GetProductImagesQueryResponse : IRequest<GetProductImagesQueryRequest>
     {
-        public ICollection<GetProductImageFileVM> Images { get; set; } = [];
+        public int TotalItems { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
+        public List<GetProductImageFileVM> Images { get; set; } = [];
     }
 }
