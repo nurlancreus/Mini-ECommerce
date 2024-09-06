@@ -313,6 +313,28 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
 
         public async Task DeleteProductImageAsync(string productImageId)
         {
+            var product = await _productReadRepository.Table
+                .Include(p => p.ProductProductImageFiles)
+                    .ThenInclude(ppif => ppif.ProductImageFile)
+                .FirstOrDefaultAsync(p => p.ProductProductImageFiles.Any(ppif => ppif.ProductImageFile.Id.ToString() == productImageId));
+
+            if (product == null)
+            {
+                throw new EntityNotFoundException(nameof(product), productImageId);
+            }
+
+            var currentMainImage = product.ProductProductImageFiles.FirstOrDefault(ppif => ppif.IsMain);
+
+            if (currentMainImage?.ProductImageFileId.ToString() == productImageId) 
+            {
+                var otherImages = product.ProductProductImageFiles.Where(ppif => !ppif.IsMain);
+
+                if (otherImages.Any())
+                {
+                    otherImages.ElementAt(0).IsMain = true;
+                } 
+            }
+
             await _fileService.DeleteAsync(productImageId, _productImageFileWriteRepository, _productImageFileReadRepository);
         }
 
