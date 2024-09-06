@@ -17,7 +17,7 @@ namespace Mini_ECommerce.Application.ViewModels.Product
         public float Price { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public ICollection<GetProductImageFileVM> ProductImageFiles { get; set; } = [];
+        public List<GetProductImageFileVM> ProductImageFiles { get; set; } = [];
 
     }
 }
