@@ -30,8 +30,6 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
                 Key = key
             };
 
-            throw new Exception("test");
-
             await _s3Client.DeleteObjectAsync(deleteObjectRequest);
         }
 
