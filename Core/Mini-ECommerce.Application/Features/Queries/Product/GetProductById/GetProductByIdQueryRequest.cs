@@ -10,7 +10,6 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
 {
     public class GetProductByIdQueryRequest : IRequest<GetProductByIdQueryResponse>
     {
-        [FromRoute]
         public string Id { get; set; }
     }
 }

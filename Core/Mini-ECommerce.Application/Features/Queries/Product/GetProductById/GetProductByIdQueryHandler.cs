@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
@@ -15,36 +16,18 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
 {
     public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQueryRequest, GetProductByIdQueryResponse>
     {
-        private readonly IProductReadRepository _productReadRepository;
-        private readonly IOrderReadRepository _orderReadRepository;
+        private readonly IProductService _productService;
 
-        public GetProductByIdQueryHandler(IProductReadRepository productReadRepository, IOrderReadRepository orderReadRepository)
+        public GetProductByIdQueryHandler(IProductService productService)
         {
-            _productReadRepository = productReadRepository;
-            _orderReadRepository = orderReadRepository;
+            _productService = productService;
         }
 
         public async Task<GetProductByIdQueryResponse> Handle(GetProductByIdQueryRequest request, CancellationToken cancellationToken)
         {
-            var product = await _productReadRepository.GetByIdAsync(request.Id, false);
+            var product = await _productService.GetProductByIdAsync(request.Id);
 
-            if (product == null)
-            {
-                throw new EntityNotFoundException(nameof(product), request.Id);
-            }
-
-            // Explicitly load related entities
-
-            /*
-            await _productReadRepository.Table.Entry(product).Collection(p => p.Orders).LoadAsync(cancellationToken);
-            foreach (var order in product.Orders)
-            {
-                await _orderReadRepository.Table.Entry(order).Reference(o => o.Customer).LoadAsync(cancellationToken);
-            }
-            */
-
-            // Map the product and its related entities to the response view model
-            var response = new GetProductByIdQueryResponse()
+            return new GetProductByIdQueryResponse()
             {
                 Product = new GetProductVM
                 {
@@ -56,8 +39,6 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
                     UpdatedAt = product.UpdatedAt,
                 }
             };
-
-            return response;
         }
     }
 }

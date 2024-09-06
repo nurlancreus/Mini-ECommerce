@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
 {
-    public class GetAllProductQueryResponse : IRequest<GetAllProductQueryRequest>
+    public class GetAllProductsQueryResponse : IRequest<GetAllProductsQueryRequest>
     {
         public int TotalItems { get; set; }
         public int Page { get; set; }
