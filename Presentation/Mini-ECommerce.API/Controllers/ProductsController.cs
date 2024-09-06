@@ -17,11 +17,13 @@ using Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct;
 using Mini_ECommerce.Application.Features.Queries.Product.GetProductById;
 using Mini_ECommerce.Application.RequestParameters;
 using Mini_ECommerce.Domain.Entities;
-using Mini_ECommerce.Domain.Enums;
 using System.Net;
 using Mini_ECommerce.Persistence.Concretes.Services;
 using Mini_ECommerce.Application.Features.Commands.Product.UpdateStockQrCodeToProduct;
 using Mini_ECommerce.Application.Features.Queries.GetQrCodeToProduct;
+using Mini_ECommerce.Application.Features.Commands.ProductImageFile.ChangeMainImage;
+using Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemoveProductImage;
+using Mini_ECommerce.Application.Features.Queries.ProductImageFile.GetProductImages;
 
 namespace Mini_ECommerce.API.Controllers
 {
@@ -31,37 +33,17 @@ namespace Mini_ECommerce.API.Controllers
 
     public class ProductsController : ControllerBase
     {
-        private readonly IProductReadRepository _productReadRepository;
-        private readonly IProductWriteRepository _productWriteRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        // private readonly IFileService _fileService;
-        private readonly IStorageService _storageService;
-
-        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
-        private readonly IProductImageFileReadRepository _productImageFileReadRepository;
-
-        private readonly IInvoiceFileWriteRepository _invoiceFileWriteRepository;
-        private readonly IInvoiceFileReadRepository _invoiceFileReadRepository;
 
         private readonly IMediator _mediator;
 
-        public ProductsController(IProductReadRepository productReadRepository, IProductWriteRepository productWriteRepository, IWebHostEnvironment webHostEnvironment, IStorageService storageService, IProductImageFileWriteRepository productImageFileWriteRepository, IProductImageFileReadRepository productImageFileReadRepository, IInvoiceFileWriteRepository invoiceFileWriteRepository, IInvoiceFileReadRepository invoiceFileReadRepository, IMediator mediator)
+        public ProductsController(IMediator mediator)
         {
-            _productReadRepository = productReadRepository;
-            _productWriteRepository = productWriteRepository;
-            _webHostEnvironment = webHostEnvironment;
-            // _fileService = fileService;
-            _storageService = storageService;
-            _productImageFileWriteRepository = productImageFileWriteRepository;
-            _productImageFileReadRepository = productImageFileReadRepository;
-            _invoiceFileWriteRepository = invoiceFileWriteRepository;
-            _invoiceFileReadRepository = invoiceFileReadRepository;
             _mediator = mediator;
         }
 
         [HttpGet]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Reading, Definition = "Get All Products")]
-        public async Task<IActionResult> GetAll([FromQuery] GetAllProductQueryRequest getAllProductQueryRequest)
+        public async Task<IActionResult> GetAll([FromQuery] GetAllProductsQueryRequest getAllProductQueryRequest)
         {
             var response = await _mediator.Send(getAllProductQueryRequest);
 
@@ -71,7 +53,7 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpGet("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Reading, Definition = "Get Product")]
-        public async Task<IActionResult> Get(GetProductByIdQueryRequest getProductByIdQueryRequest)
+        public async Task<IActionResult> Get([FromRoute] GetProductByIdQueryRequest getProductByIdQueryRequest)
         {
             var response = await _mediator.Send(getProductByIdQueryRequest);
 
@@ -100,10 +82,9 @@ namespace Mini_ECommerce.API.Controllers
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
         public async Task<IActionResult> Delete([FromRoute] RemoveProductCommandRequest removeProductCommandRequest)
         {
-            await _mediator.Send(removeProductCommandRequest);
+           var response = await _mediator.Send(removeProductCommandRequest);
 
-            return NoContent();
-
+            return Ok(response);
         }
 
         [HttpGet("qrcode/{ProductId}")]
@@ -121,37 +102,34 @@ namespace Mini_ECommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetFiles()
+        [HttpPost("[action]/{Id}")]
+        public async Task<IActionResult> UploadFile([FromRoute] UploadProductImageCommandRequest uploadProductImageCommandRequest)
         {
-            var files = await _storageService.GetFilesAsync("files");
+            var response = await _mediator.Send(uploadProductImageCommandRequest);
 
-            return Ok(files);
+            return Ok(response);
+        }
+
+        [HttpPut("[action]/{ProductImageId}")]
+        public async Task<IActionResult> ChangeMainImage([FromRoute] ChangeMainImageCommandRequest changeMainImageCommandRequest)
+        {
+            var response = await _mediator.Send(changeMainImageCommandRequest);
+
+            return Ok(response);
+        }
+
+        [HttpGet("[action]/{Id}")]
+        public async Task<IActionResult> GetProductImages([FromRoute] GetProductImagesQueryRequest getProductImagesQueryRequest)
+        {
+            var response = await _mediator.Send(getProductImagesQueryRequest);
+
+            return Ok(response);
         }
 
         [HttpDelete("[action]/{id}")]
-        public async Task<IActionResult> DeleteFile([FromRoute] string id)
+        public async Task<IActionResult> DeleteFile([FromRoute] RemoveProductImageCommandRequest removeProductImageCommandRequest)
         {
-            var file = await _productImageFileReadRepository.GetByIdAsync(id);
-
-            if (file != null)
-            {
-                bool isDeleted = await _productImageFileWriteRepository.RemoveAsync(id);
-
-                if (isDeleted)
-                {
-                    await _productImageFileWriteRepository.SaveAsync();
-                    await _storageService.DeleteAsync("files", file.FileName);
-                }
-            }
-
-            return Ok();
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Upload(UploadProductImageCommandRequest uploadProductImageCommandRequest)
-        {
-            var response = await _mediator.Send(uploadProductImageCommandRequest);
+            var response = await _mediator.Send(removeProductImageCommandRequest);
 
             return Ok(response);
         }
