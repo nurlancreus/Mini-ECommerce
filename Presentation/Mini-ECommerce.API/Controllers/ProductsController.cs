@@ -62,27 +62,27 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpPost]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Writing, Definition = "Create Product")]
-        public async Task<IActionResult> Create(CreateProductCommandRequest createProductCommandRequest)
+        public async Task<IActionResult> Create([FromForm] CreateProductCommandRequest createProductCommandRequest)
         {
-            await _mediator.Send(createProductCommandRequest);
+           var response = await _mediator.Send(createProductCommandRequest);
 
-            return Created();
+            return Ok(response);
         }
 
         [HttpPut("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
         public async Task<IActionResult> Update([FromBody, FromRoute] UpdateProductCommandRequest updateProductCommandRequest)
         {
-            await _mediator.Send(updateProductCommandRequest);
+            var response = await _mediator.Send(updateProductCommandRequest);
 
-            return Created();
+            return Ok(response);
         }
 
         [HttpDelete("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Deleting, Definition = "Delete Product")]
         public async Task<IActionResult> Delete([FromRoute] RemoveProductCommandRequest removeProductCommandRequest)
         {
-           var response = await _mediator.Send(removeProductCommandRequest);
+            var response = await _mediator.Send(removeProductCommandRequest);
 
             return Ok(response);
         }
@@ -126,7 +126,7 @@ namespace Mini_ECommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("[action]/{id}")]
+        [HttpDelete("[action]/{Id}")]
         public async Task<IActionResult> DeleteFile([FromRoute] RemoveProductImageCommandRequest removeProductImageCommandRequest)
         {
             var response = await _mediator.Send(removeProductImageCommandRequest);
