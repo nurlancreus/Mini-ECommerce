@@ -20,7 +20,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.RemoveProduct
 
         public async Task<RemoveProductCommandResponse> Handle(RemoveProductCommandRequest request, CancellationToken cancellationToken)
         {
-           await  _productService.DeleteProductAsync(request.Id);
+            await _productService.DeleteProductAsync(request.Id);
 
             return new RemoveProductCommandResponse()
             {
