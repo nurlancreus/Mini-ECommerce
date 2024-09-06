@@ -8,7 +8,7 @@ using Mini_ECommerce.Application.DTOs.FacebookAccess;
 using Mini_ECommerce.Application.DTOs.Token;
 using Mini_ECommerce.Application.DTOs.User;
 using Mini_ECommerce.Application.Exceptions;
-using Mini_ECommerce.Application.Extensions;
+using Mini_ECommerce.Application.Helpers;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;

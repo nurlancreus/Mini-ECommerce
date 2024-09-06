@@ -10,7 +10,6 @@ using Mini_ECommerce.Application.DTOs.Role;
 using Mini_ECommerce.Application.DTOs.User;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.Exceptions.Base;
-using Mini_ECommerce.Application.Extensions;
 using Mini_ECommerce.Application.Features.Commands.User.RegisterUser;
 using Mini_ECommerce.Application.Helpers;
 using Mini_ECommerce.Domain.Entities.Identity;
