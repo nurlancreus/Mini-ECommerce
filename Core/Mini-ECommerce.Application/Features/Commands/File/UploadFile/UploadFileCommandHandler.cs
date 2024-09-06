@@ -27,20 +27,24 @@ namespace Mini_ECommerce.Application.Features.Commands.File.UploadFiles
 
         public async Task<UploadFileCommandResponse> Handle(UploadFileCommandRequest request, CancellationToken cancellationToken)
         {
-            var addFile = delegate (string fileName, string pathName, StorageType storageType)
+            async Task<string?> addFileAsync(string fileName, string pathName, StorageType storageType)
             {
-                var productImageFile = new AppFile()
+                var file = new AppFile()
                 {
-                   Path = pathName,
-                   FileName = fileName,
-                   Storage = storageType
+                    Path = pathName,
+                    FileName = fileName,
+                    Storage = storageType
                 };
 
-              return _appFileWriteRepository.AddAsync(productImageFile).Result;
-         
+                bool isAdded = await _appFileWriteRepository.AddAsync(file);
+
+                if (isAdded) return file.Id.ToString();
+
+                return null;
+
             };
 
-            await _fileService.UploadAsync(request.PathName, request.FormFiles,_appFileWriteRepository, addFile);
+            await _fileService.UploadAsync(request.PathName, request.FormFiles, _appFileWriteRepository, addFileAsync);
 
             return new UploadFileCommandResponse()
             {
