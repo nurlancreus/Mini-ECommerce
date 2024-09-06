@@ -8,9 +8,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{493C2045-D5F5-4CFD-9DCE-91BA7CF30976}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{329451B6-9B21-4171-AF49-DA9A10B9165D}"
-	ProjectSection(SolutionItems) = preProject
-		Infrastructure\Mini-ECommerce.Persistence\ServiceRegistration.cs = Infrastructure\Mini-ECommerce.Persistence\ServiceRegistration.cs
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mini-ECommerce.Application", "Core\Mini-ECommerce.Application\Mini-ECommerce.Application.csproj", "{FE034564-48FC-4590-A5EA-3E3FA0BC3B88}"
 EndProject
@@ -26,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mini-ECommerce.SignalR", "I
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B238C78A-2500-4482-8B54-416748632D97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mini-ECommerce.UnitTests", "Tests\Mini-ECommerce.UnitTests\Mini-ECommerce.UnitTests.csproj", "{4A4C85A3-7B9A-439A-8DBE-96CC4BC1E264}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mini-ECommerce.UnitTests", "Tests\Mini-ECommerce.UnitTests\Mini-ECommerce.UnitTests.csproj", "{4A4C85A3-7B9A-439A-8DBE-96CC4BC1E264}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mini-ECommerce.IntegrationTests", "Tests\Mini-ECommerce.IntegrationTests\Mini-ECommerce.IntegrationTests.csproj", "{29448A39-94E0-4F75-9932-9E32133688A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mini-ECommerce.IntegrationTests", "Tests\Mini-ECommerce.IntegrationTests\Mini-ECommerce.IntegrationTests.csproj", "{29448A39-94E0-4F75-9932-9E32133688A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
