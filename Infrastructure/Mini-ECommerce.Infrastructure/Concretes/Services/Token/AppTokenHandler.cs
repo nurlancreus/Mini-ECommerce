@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Application.DTOs.Token;
+using Mini_ECommerce.Application.Options.Token;
 using Mini_ECommerce.Domain.Entities.Identity;
 using System;
 using System.Collections.Generic;
@@ -17,34 +19,32 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
 {
     public class AppTokenHandler : IAppTokenHandler
     {
-        private readonly IConfiguration _configuration;
+        private readonly Mini_ECommerce.Application.Options.Token.TokenOptions _tokenOptions;
         private readonly UserManager<AppUser> _userManager;
 
-        public AppTokenHandler(IConfiguration configuration, UserManager<AppUser> userManager)
+        public AppTokenHandler(IOptions<Mini_ECommerce.Application.Options.Token.TokenOptions> tokenSettings, UserManager<AppUser> userManager)
         {
-            _configuration = configuration;
+            _tokenOptions = tokenSettings.Value;
             _userManager = userManager;
         }
 
         public TokenDTO CreateAccessToken(AppUser appUser)
         {
-            double tokenLifeTime = Convert.ToDouble(_configuration["Token:AccessTokenLifeTimeInMinutes"]);
-
             TokenDTO token = new()
             {
-                ExpirationDate = DateTime.UtcNow.AddMinutes(tokenLifeTime),
+                ExpirationDate = DateTime.UtcNow.AddMinutes(_tokenOptions.AccessTokenLifeTimeInMinutes),
             };
 
             // Get the symmetric security key.
-            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"]));
+            SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokenOptions.SecurityKey));
 
             // Create the encrypted credentials.
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-            List<Claim> claims =
-            [
+            List<Claim> claims = new()
+            {
                 new Claim(ClaimTypes.Name, appUser.UserName!)
-            ];
+            };
 
             // Add role claims for the user.
             var userRoles = _userManager.GetRolesAsync(appUser).Result;
@@ -56,8 +56,8 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
 
             // Set the token's configurations.
             JwtSecurityToken securityToken = new(
-                audience: _configuration["Token:Audience"],
-                issuer: _configuration["Token:Issuer"],
+                audience: _tokenOptions.Audience,
+                issuer: _tokenOptions.Issuer,
                 expires: token.ExpirationDate,
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials,
@@ -89,12 +89,12 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Token
             var tokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateAudience = true,
-                ValidAudience = _configuration["Token:Audience"],
+                ValidAudience = _tokenOptions.Audience,
                 ValidateIssuer = true,
-                ValidIssuer = _configuration["Token:Issuer"],
+                ValidIssuer = _tokenOptions.Issuer,
 
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:SecurityKey"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_tokenOptions.SecurityKey)),
 
                 ValidateLifetime = false //should be false
             };
