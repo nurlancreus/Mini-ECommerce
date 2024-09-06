@@ -14,8 +14,8 @@ namespace Mini_ECommerce.Application.Abstractions.Services
 {
     public interface IFileService
     {
-        public Task UploadAsync<T>(string pathName, FormFileCollection formFiles, IWriteRepository<T> fileWriteRepository, Func<string, string, StorageType, bool> addFile) where T : AppFile;
-        public Task DeleteAsync<T>(string id, IWriteRepository<T> fileWriteRepository, IReadRepository<T> readRepository) where T : AppFile;
+        public Task<List<string>> UploadAsync<T>(string pathName, FormFileCollection formFiles, IWriteRepository<T> fileWriteRepository, Func<string, string, StorageType, Task<string?>> addFile) where T : AppFile;
+        public Task DeleteAsync<T>(string id, IWriteRepository<T> fileWriteRepository, IReadRepository<T> fileReadRepository) where T : AppFile;
         public Task<GetAppFilesDTO> GetFilesAsync<T>(int page, int size, string? pathName, IReadRepository<T> fileReadRepository) where T : AppFile;
         public Task<GetAppFileDTO> GetAsync<T>(string id, IReadRepository<T> fileReadRepository) where T : AppFile;
     }

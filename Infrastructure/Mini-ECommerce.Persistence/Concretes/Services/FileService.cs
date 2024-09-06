@@ -160,39 +160,44 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             };
         }
 
-        public async Task UploadAsync<T>(string pathName, FormFileCollection formFiles, IWriteRepository<T> writeRepository, Func<string, string, StorageType, bool> addFile) where T : AppFile
+        public async Task<List<string>> UploadAsync<T>(string pathName, FormFileCollection formFiles, IWriteRepository<T> writeRepository, Func<string, string, StorageType, Task<string?>> addFileAsync) where T : AppFile
         {
-            using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
+            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+            try
             {
-                try
-                {
-                    _logger.LogInformation($"Uploading files to path: {pathName}.");
-                    List<(string fileName, string pathOrContainerName)> results = await _storageService.UploadAsync(pathName, formFiles);
+                _logger.LogInformation($"Uploading files to path: {pathName}.");
+                List<(string fileName, string pathOrContainerName)> results = await _storageService.UploadAsync(pathName, formFiles);
 
-                    foreach (var (fileName, pathOrContainerName) in results)
+                List<string> fileIds = [];
+
+                foreach (var (fileName, pathOrContainerName) in results)
+                {
+
+                    string? fileId = await addFileAsync(fileName, pathOrContainerName, _storageService.StorageName);
+
+                    if (!string.IsNullOrEmpty(fileId))
                     {
+                        _logger.LogInformation($"File {fileName} successfully added to the database.");
 
-                        bool isAdded = addFile(fileName, pathOrContainerName, _storageService.StorageName);
-
-                        if (isAdded)
-                        {
-                            _logger.LogInformation($"File {fileName} successfully added to the database.");
-                        }
-                        else
-                        {
-                            _logger.LogWarning($"File {fileName} could not be added to the database. Deleting from storage.");
-                            await _storageService.DeleteAsync(pathOrContainerName, fileName);
-                        }
+                        fileIds.Add(fileId);
                     }
+                    else
+                    {
+                        _logger.LogWarning($"File {fileName} could not be added to the database. Deleting from storage.");
+                        await _storageService.DeleteAsync(pathOrContainerName, fileName);
+                    }
+                }
 
-                    await writeRepository.SaveAsync();
-                    scope.Complete();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError($"Error during file upload to path {pathName}: {ex.Message}");
-                    throw;
-                }
+                await writeRepository.SaveAsync();
+                scope.Complete();
+
+                return fileIds;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error during file upload to path {pathName}: {ex.Message}");
+                throw;
             }
         }
     }
