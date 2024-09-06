@@ -3,7 +3,7 @@ using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Mini_ECommerce.Application.Abstractions.Services.Storage.AWS;
-using Mini_ECommerce.Infrastructure.Helpers;
+using Mini_ECommerce.Application.Helpers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;

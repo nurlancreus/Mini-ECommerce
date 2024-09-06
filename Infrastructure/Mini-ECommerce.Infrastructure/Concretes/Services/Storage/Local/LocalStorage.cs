@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Abstractions.Services.Storage.Local;
-using Mini_ECommerce.Infrastructure.Helpers;
+using Mini_ECommerce.Application.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
