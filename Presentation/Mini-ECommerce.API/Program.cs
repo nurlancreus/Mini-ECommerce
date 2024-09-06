@@ -50,7 +50,7 @@ namespace Mini_ECommerce.API
             builder.Services.AddStorage(StorageType.AWS, builder.Configuration);
 
             // Add services to the container.
-            builder.Services.AddApplicationServices()
+            builder.Services.AddApplicationServices(builder.Configuration)
                 .AddPersistenceServices(builder.Configuration)
                 .AddInfrastructureServices()
                 .AddSignalRServices();
