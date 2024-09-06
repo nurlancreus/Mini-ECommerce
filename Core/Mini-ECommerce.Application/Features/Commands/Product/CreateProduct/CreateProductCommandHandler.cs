@@ -30,6 +30,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.CreateProduct
                 Name = request.Name,
                 Price = request.Price,
                 Stock = request.Stock,
+                ProductImages = request.ProductImages,
             });
 
             return new CreateProductCommandResponse() { Success = true, Message = "Product Created Successfully!", };
