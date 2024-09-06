@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Mini_ECommerce.Application.Abstractions.Repositories;
+using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Abstractions.Services.Storage;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.File;
@@ -14,76 +15,22 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.UploadPr
 {
     public class UploadProductImageCommandHandler : IRequestHandler<UploadProductImageCommandRequest, UploadProductImageCommandResponse>
     {
-        private readonly IStorageService _storageService;
-        private readonly IProductReadRepository _productReadRepository;
-        private readonly IProductImageFileWriteRepository _productImageFileWriteRepository;
+        private readonly IProductService _productService;
 
-        public UploadProductImageCommandHandler(IStorageService storageService, IProductReadRepository productReadRepository, IProductImageFileWriteRepository productImageFileWriteRepository)
+        public UploadProductImageCommandHandler(IProductService productService)
         {
-            _storageService = storageService;
-            _productReadRepository = productReadRepository;
-            _productImageFileWriteRepository = productImageFileWriteRepository;
+            _productService = productService;
         }
 
         public async Task<UploadProductImageCommandResponse> Handle(UploadProductImageCommandRequest request, CancellationToken cancellationToken)
         {
-            var product = await _productReadRepository.GetByIdAsync(request.Id);
+            await _productService.UploadProductImagesAsync(request.Id, request.ProductImages);
 
-            if (request.Files == null || !request.Files.Any())
+            return new UploadProductImageCommandResponse()
             {
-                throw new ArgumentException("No files were provided for upload.");
-            }
-
-            if (product == null)
-            {
-                throw new EntityNotFoundException(nameof(product), request.Id);
-            }
-
-            var uploadResults = await _storageService.UploadAsync("product-images", request.Files);
-
-            try
-            {
-
-                int counter = 0;
-
-                var productImages = uploadResults.Select(result =>
-                {
-
-                    counter++;
-
-                    return new Domain.Entities.ProductImageFile
-                    {
-                        //IsMain = counter == 1,
-                        FileName = result.fileName,
-                        Path = result.pathOrContainerName,
-                        Storage = _storageService.StorageName,
-                        Products = [product]
-                    };
-                }).ToList();
-
-                var isAdded = await _productImageFileWriteRepository.AddRangeAsync(productImages);
-
-                if (!isAdded)
-                {
-                    await _storageService.DeleteAllAsync("product-images");
-
-                    throw new Exception("Could not save files in the database, Something happened");
-                }
-
-                await _productImageFileWriteRepository.SaveAsync();
-
-                return new UploadProductImageCommandResponse()
-                {
-                    Message = $"{(request.Files.Count > 1 ? "Files" : "File")} added successfully!",
-                };
-            }
-            catch
-            {
-                // remove added product from bucket
-                throw;
-            }
-
-
+                Success = true,
+                Message = "Product images uploaded successfully!"
+            };
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Abstractions.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,22 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemovePr
 {
     public class RemoveProductImageCommandHandler : IRequestHandler<RemoveProductImageCommandRequest, RemoveProductImageCommandResponse>
     {
-        public Task<RemoveProductImageCommandResponse> Handle(RemoveProductImageCommandRequest request, CancellationToken cancellationToken)
+        private readonly IProductService _productService;
+
+        public RemoveProductImageCommandHandler(IProductService productService)
         {
-            throw new NotImplementedException();
+            _productService = productService;
+        }
+
+        public async Task<RemoveProductImageCommandResponse> Handle(RemoveProductImageCommandRequest request, CancellationToken cancellationToken)
+        {
+            await _productService.DeleteProductImageAsync(request.Id);
+
+            return new RemoveProductImageCommandResponse()
+            {
+                Success = true,
+                Message = "Product image deleted successfully!"
+            };
         }
     }
 }

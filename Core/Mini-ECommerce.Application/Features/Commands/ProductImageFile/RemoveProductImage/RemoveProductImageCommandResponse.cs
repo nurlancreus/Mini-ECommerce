@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Mini_ECommerce.Application.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemoveProductImage
 {
-    public class RemoveProductImageCommandResponse : IRequest<RemoveProductImageCommandRequest>
+    public class RemoveProductImageCommandResponse : BaseResponse, IRequest<RemoveProductImageCommandRequest>
     {
     }
 }
