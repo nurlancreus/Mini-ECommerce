@@ -6,7 +6,6 @@ using Mini_ECommerce.Application.Features.Commands.User.FacebookLoginUser;
 using Mini_ECommerce.Application.Features.Commands.User.GoogleLoginUser;
 using Mini_ECommerce.Application.Features.Commands.User.LoginUser;
 using Mini_ECommerce.Application.Features.Commands.User.RefreshTokenLogin;
-using Mini_ECommerce.Application.Features.Commands.User.RegisterUser;
 using Mini_ECommerce.Application.Features.Commands.User.ResetPassword;
 using Mini_ECommerce.Application.Features.Commands.User.VerifyResetToken;
 
