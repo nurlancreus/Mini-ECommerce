@@ -51,6 +51,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Order.CompleteOrder
                         Username = completedOrder.Username,
                         Email = completedOrder.Email,
                         OrderDate = completedOrder.OrderDate,
+                        CreatedAt = completedOrder.CreatedAt,
                     }
                 };
             }
