@@ -15,5 +15,6 @@ namespace Mini_ECommerce.Application.DTOs.Address
         public string State { get; set; }
         public string PostalCode { get; set; }
         public string Country { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 }
