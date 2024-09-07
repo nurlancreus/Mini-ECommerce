@@ -23,6 +23,8 @@ using Serilog.Context;
 using Mini_ECommerce.API.Middlewares;
 using Mini_ECommerce.SignalR;
 using ETicaretAPI.API.Filters;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 namespace Mini_ECommerce.API
 {
@@ -83,7 +85,20 @@ namespace Mini_ECommerce.API
             // Configure Swagger
             builder.ConfigureSwagger();
 
+            // Implement built-in rate limiter
+            builder.Services.AddRateLimiter(options => options
+            .AddFixedWindowLimiter(policyName: "fixed", limiterOptions =>
+            {
+                limiterOptions.PermitLimit = 100;
+                limiterOptions.Window = TimeSpan.FromMinutes(1);
+                limiterOptions.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+                limiterOptions.QueueLimit = 5;
+            }));
+
             var app = builder.Build();
+
+            //Use rate limiter
+            app.UseRateLimiter();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

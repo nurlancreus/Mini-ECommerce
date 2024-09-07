@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Mini_ECommerce.Application.Abstractions.Services.Application;
 using Mini_ECommerce.Application.Attributes;
 using Mini_ECommerce.Domain.Enums;
@@ -9,6 +10,7 @@ namespace Mini_ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("fixed")]
     //[Authorize(AuthenticationSchemes = "Admin")]
     public class ApplicationServiceController : ControllerBase
     {
