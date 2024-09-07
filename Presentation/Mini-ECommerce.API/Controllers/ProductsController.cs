@@ -110,7 +110,7 @@ namespace Mini_ECommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpPut("[action]/{ProductImageId}")]
+        [HttpPut("{ProductId}/[action]/{ProductImageId}")]
         public async Task<IActionResult> ChangeMainImage([FromRoute] ChangeMainImageCommandRequest changeMainImageCommandRequest)
         {
             var response = await _mediator.Send(changeMainImageCommandRequest);
@@ -126,7 +126,7 @@ namespace Mini_ECommerce.API.Controllers
             return Ok(response);
         }
 
-        [HttpDelete("[action]/{Id}")]
+        [HttpDelete("{ProductId}/[action]/{ProductImageId}")]
         public async Task<IActionResult> DeleteFile([FromRoute] RemoveProductImageCommandRequest removeProductImageCommandRequest)
         {
             var response = await _mediator.Send(removeProductImageCommandRequest);
