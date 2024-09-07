@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using Mini_ECommerce.Application.Abstractions.Repositories;
 using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.DTOs.Address;
@@ -43,48 +44,53 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
         {
             if (!Guid.TryParse(id, out Guid orderId))
             {
-                // Invalid GUID format
                 throw new OrderNotCompletedException("Order not found", new InvalidOperationException("Cannot parse order Id"));
             }
 
-            // Retrieve the order by ID with related data
             var order = await _orderReadRepository.Table
                 .Include(o => o.Basket)
-                .ThenInclude(b => b.User)
+                    .ThenInclude(b => b.User)
+                .Include(o => o.Basket)
+                    .ThenInclude(b => b.BasketItems)
+                        .ThenInclude(bi => bi.Product)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
 
             if (order == null)
             {
-                // Order not found
                 throw new OrderNotCompletedException(HttpStatusCode.BadRequest, $"Order with the Id of {orderId} not found!");
             }
 
-            // Create a new completed order record
+            foreach (BasketItem item in order.Basket.BasketItems)
+            {
+                if (item.Product.Stock < item.Quantity)
+                {
+                    throw new OrderNotCompletedException(HttpStatusCode.BadRequest, $"Product ({item.Product.Id}) does not have enough stock. ({item.Product.Stock}, {item.Quantity})");
+                }
+            }
+
             var completedOrder = new CompletedOrder
             {
                 OrderId = orderId
             };
 
-            // Add the completed order to the repository
             await _completedOrderWriteRepository.AddAsync(completedOrder);
-
-            // Save changes to the repository
             bool isSaved = await _completedOrderWriteRepository.SaveAsync() > 0;
 
-            // Prepare the DTO for the response
+            if (!isSaved) return (false, null);
+
             var completedOrderDTO = new CompletedOrderDTO
             {
                 Firstname = order.Basket.User.FirstName,
                 Lastname = order.Basket.User.LastName,
                 OrderCode = order.OrderCode,
                 OrderDate = order.CreatedAt,
-                Username = order.Basket.User.UserName!,
-                Email = order.Basket.User.Email!
+                Username = order.Basket.User.UserName ?? "N/A",
+                Email = order.Basket.User.Email ?? "N/A",
+                CreatedAt = completedOrder.CreatedAt,
             };
 
-            return (isSaved, completedOrderDTO);
+            return (true, completedOrderDTO);
         }
-
 
         public async Task CreateOrderAsync(CreateOrderDTO createOrder)
         {
@@ -143,7 +149,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                         City = o.Address.City,
                         PostalCode = o.Address.PostalCode,
                         State = o.Address.State,
-                        Street = o.Address.Street
+                        Street = o.Address.Street,
+                        CreatedAt = o.Address.CreatedAt
                     },
                     BasketItems = o.Basket.BasketItems.Select(bi => new GetBasketItemDTO()
                     {
@@ -193,7 +200,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 FirstName = c.FirstName,
                 LastName = c.LastName,
                 Email = c.Email!,
-                UserName = c.UserName!
+                UserName = c.UserName!,
             }).ToListAsync();
 
             return customers;

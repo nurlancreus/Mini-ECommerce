@@ -141,7 +141,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                 Name = bi.Product.Name,
                 Price = bi.Product.Price,
                 Quantity = bi.Quantity,
-                TotalPrice = bi.Quantity * bi.Product.Price
+                TotalPrice = bi.Quantity * bi.Product.Price,
+                CreatedAt = bi.CreatedAt,
             }).ToList();
         }
 
@@ -167,7 +168,6 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             throw new InvalidOperationException("Could not remove basket item.");
 
         }
-
 
         public async Task UpdateQuantityAsync(UpdateBasketItemDTO basketItem)
         {

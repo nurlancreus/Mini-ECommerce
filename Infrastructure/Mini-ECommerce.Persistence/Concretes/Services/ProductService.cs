@@ -240,24 +240,28 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             };
         }
 
-        public async Task ChangeMainImageAsync(string productImageId)
+        public async Task ChangeMainImageAsync(string productId, string productImageId)
         {
-            var product = await _productReadRepository.Table
-                .Include(p => p.ProductProductImageFiles)
-                    .ThenInclude(ppif => ppif.ProductImageFile)
-                .FirstOrDefaultAsync(p => p.ProductProductImageFiles.Any(ppif => ppif.ProductImageFile.Id.ToString() == productImageId));
+            //var product = await _productReadRepository.Table
+            //    .Include(p => p.ProductProductImageFiles)
+            //        .ThenInclude(ppif => ppif.ProductImageFile)
+            //    .FirstOrDefaultAsync(p => p.ProductProductImageFiles.Any(ppif => ppif.ProductImageFile.Id.ToString() == productImageId));
+
+            var product = await _productReadRepository.Table.Include(p => p.ProductProductImageFiles).ThenInclude(ppif => ppif.ProductImageFile).FirstOrDefaultAsync(p => p.Id.ToString() == productId);
 
             if (product == null)
             {
                 throw new EntityNotFoundException(nameof(product), productImageId);
             }
 
+            if (product.ProductImageFiles.Count == 0)
+            {
+                throw new EntityNotFoundException("Product currently has no image.");
+            }
+
             var currentMainImage = product.ProductProductImageFiles.FirstOrDefault(ppif => ppif.IsMain);
 
-            if (currentMainImage?.ProductImageFile.Id.ToString() == productImageId)
-            {
-                return;
-            }
+            if (currentMainImage?.ProductImageFile.Id.ToString() == productImageId) return;
 
             if (currentMainImage != null)
             {
@@ -311,31 +315,45 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             }
         }
 
-        public async Task DeleteProductImageAsync(string productImageId)
+        public async Task DeleteProductImageAsync(string productId, string productImageId)
         {
-            var product = await _productReadRepository.Table
-                .Include(p => p.ProductProductImageFiles)
-                    .ThenInclude(ppif => ppif.ProductImageFile)
-                .FirstOrDefaultAsync(p => p.ProductProductImageFiles.Any(ppif => ppif.ProductImageFile.Id.ToString() == productImageId));
+
+            var product = await _productReadRepository.Table.Include(p => p.ProductProductImageFiles).ThenInclude(ppfi => ppfi.ProductImageFile).FirstOrDefaultAsync(p => p.Id.ToString() == productId);
 
             if (product == null)
             {
                 throw new EntityNotFoundException(nameof(product), productImageId);
             }
 
-            var currentMainImage = product.ProductProductImageFiles.FirstOrDefault(ppif => ppif.IsMain);
+            if (product.ProductImageFiles.Count == 0)
+            {
+                throw new EntityNotFoundException("Product currently has no image.");
+            };
 
-            if (currentMainImage?.ProductImageFileId.ToString() == productImageId) 
+            var currentMainImage = product.ProductProductImageFiles.FirstOrDefault(ppif => ppif.IsMain)?.ProductImageFile;
+
+            if (currentMainImage?.Id.ToString() == productImageId)
             {
                 var otherImages = product.ProductProductImageFiles.Where(ppif => !ppif.IsMain);
 
                 if (otherImages.Any())
                 {
                     otherImages.ElementAt(0).IsMain = true;
-                } 
+                }
             }
 
-            await _fileService.DeleteAsync(productImageId, _productImageFileWriteRepository, _productImageFileReadRepository);
+            //await _fileService.DeleteAsync(productImageId, _productImageFileWriteRepository, _productImageFileReadRepository);
+
+            var deletedImage = product.ProductImageFiles.FirstOrDefault(i => i.Id.ToString() == productImageId);
+
+            if (deletedImage == null)
+            {
+                throw new EntityNotFoundException("Image not found to be delete");
+            }
+
+
+            product.ProductImageFiles.Remove(deletedImage);
+            await _productWriteRepository.SaveAsync();
         }
 
         public async Task<GetProductImagesFilesDTO> GetProductImages(string productId, int page, int size)
@@ -375,7 +393,7 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
                     FileName = f.FileName,
                     Path = f.Path,
                     CreatedAt = f.CreatedAt,
-                    IsMain = imageMap.ContainsKey(f.Id) && imageMap[f.Id]  
+                    IsMain = imageMap.ContainsKey(f.Id) && imageMap[f.Id]
                 }).ToList()
             };
         }
