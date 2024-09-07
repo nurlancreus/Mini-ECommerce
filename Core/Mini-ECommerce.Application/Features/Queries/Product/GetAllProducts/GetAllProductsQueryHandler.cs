@@ -52,6 +52,7 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetAllProduct
                             FileName = i.FileName,
                             Path = i.Path,
                             IsMain = i.IsMain,
+                            CreatedAt = i.CreatedAt,
                         }).ToList()
                     };
                 }).ToList()

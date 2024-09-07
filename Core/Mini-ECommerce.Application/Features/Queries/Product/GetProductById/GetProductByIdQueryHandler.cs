@@ -4,6 +4,7 @@ using Mini_ECommerce.Application.Abstractions.Services;
 using Mini_ECommerce.Application.Exceptions;
 using Mini_ECommerce.Application.ViewModels.Address;
 using Mini_ECommerce.Application.ViewModels.Customer;
+using Mini_ECommerce.Application.ViewModels.File;
 using Mini_ECommerce.Application.ViewModels.Order;
 using Mini_ECommerce.Application.ViewModels.Product;
 using System;
@@ -37,6 +38,14 @@ namespace Mini_ECommerce.Application.Features.Queries.Product.GetProductById
                     Stock = product.Stock,
                     CreatedAt = product.CreatedAt,
                     UpdatedAt = product.UpdatedAt,
+                    ProductImageFiles = product.ProductImageFiles.Select(i => new GetProductImageFileVM ()
+                    {
+                        Id = i.Id,
+                        FileName = i.FileName,
+                        Path = i.Path,
+                        IsMain = i.IsMain,
+                        CreatedAt = i.CreatedAt
+                    }).ToList(),
                 }
             };
         }
