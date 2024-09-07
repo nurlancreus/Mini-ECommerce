@@ -12,5 +12,7 @@ namespace Mini_ECommerce.Application.ViewModels.Basket
         public float Price { get; set; }
         public int Quantity { get; set; }
         public float TotalPrice { get; set; }
+        public DateTime CreatedAt { get; set; }
+
     }
 }
