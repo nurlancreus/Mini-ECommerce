@@ -9,6 +9,7 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.ChangeMa
 {
     public class ChangeMainImageCommandRequest : IRequest<ChangeMainImageCommandResponse>
     {
+        public string ProductId { get; set; }
         public string ProductImageId { get; set; }
     }
 }

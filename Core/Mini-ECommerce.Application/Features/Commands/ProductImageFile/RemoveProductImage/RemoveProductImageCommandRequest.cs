@@ -9,6 +9,8 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemovePr
 {
     public class RemoveProductImageCommandRequest : IRequest<RemoveProductImageCommandResponse>
     {
-        public string Id {  get; set; }
+        public string ProductId { get; set; }
+        public string ProductImageId {  get; set; }
+
     }
 }

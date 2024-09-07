@@ -19,7 +19,7 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemovePr
 
         public async Task<RemoveProductImageCommandResponse> Handle(RemoveProductImageCommandRequest request, CancellationToken cancellationToken)
         {
-            await _productService.DeleteProductImageAsync(request.Id);
+            await _productService.DeleteProductImageAsync(request.ProductId, request.ProductImageId);
 
             return new RemoveProductImageCommandResponse()
             {

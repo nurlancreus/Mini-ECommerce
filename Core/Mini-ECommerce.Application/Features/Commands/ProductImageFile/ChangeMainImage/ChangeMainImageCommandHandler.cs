@@ -20,7 +20,7 @@ namespace Mini_ECommerce.Application.Features.Commands.ProductImageFile.ChangeMa
 
         public async Task<ChangeMainImageCommandResponse> Handle(ChangeMainImageCommandRequest request, CancellationToken cancellationToken)
         {
-            await _productService.ChangeMainImageAsync(request.ProductImageId);
+            await _productService.ChangeMainImageAsync(request.ProductId, request.ProductImageId);
 
             return new ChangeMainImageCommandResponse()
             {
