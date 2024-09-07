@@ -30,6 +30,7 @@ namespace Mini_ECommerce.Application.Features.Queries.Basket.GetBasketItems
                     Price = item.Price,
                     Quantity = item.Quantity,
                     TotalPrice = item.TotalPrice,
+                    CreatedAt = item.CreatedAt,
                 }).ToList()
             };
         }
