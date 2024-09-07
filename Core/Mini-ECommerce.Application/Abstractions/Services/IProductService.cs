@@ -16,8 +16,8 @@ namespace Mini_ECommerce.Application.Abstractions.Services
         Task CreateProductAsync(CreateProductDTO createProductDTO);
         Task UpdateProductAsync(UpdateProductDTO updateProductDTO);
         Task UploadProductImagesAsync(string productId, FormFileCollection productImages);
-        Task ChangeMainImageAsync(string productImageId);
-        Task DeleteProductImageAsync(string productImageId);
+        Task ChangeMainImageAsync(string productId, string productImageId);
+        Task DeleteProductImageAsync(string productId, string productImageId);
         Task DeleteProductAsync(string id);
         Task<GetProductImagesFilesDTO> GetProductImages(string productId, int page, int size);
         Task<byte[]> QrCodeToProductAsync(string productId);
