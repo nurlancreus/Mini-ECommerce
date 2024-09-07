@@ -17,6 +17,7 @@ using Mini_ECommerce.Application.Abstractions.Services.Token;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Token;
 using Mini_ECommerce.Application.Abstractions.Services.Application;
 using Mini_ECommerce.Infrastructure.Concretes.Services.Application;
+using Mini_ECommerce.Application.Options.Storage;
 
 namespace Mini_ECommerce.Infrastructure
 {
