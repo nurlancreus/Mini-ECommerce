@@ -1,9 +1,12 @@
-﻿using Amazon.S3;
+﻿using Amazon.Extensions.NETCore.Setup;
+using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Mini_ECommerce.Application.Abstractions.Services.Storage.AWS;
 using Mini_ECommerce.Application.Helpers;
+using Mini_ECommerce.Application.Options.Storage;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,11 +17,14 @@ namespace Mini_ECommerce.Infrastructure.Concretes.Services.Storage.AWS
     {
         private readonly IAmazonS3 _s3Client;
         private readonly string _bucketName;
+        private readonly StorageOptions _storageOptions;
 
-        public AWSStorage(IAmazonS3 s3Client, IConfiguration configuration)
+        public AWSStorage(IAmazonS3 s3Client, IConfiguration configuration, IOptions<StorageOptions> options)
         {
+            _storageOptions = options.Value;
             _s3Client = s3Client;
-            _bucketName = configuration["Storage:AWS:AWSS3:BucketName"]!;
+            //_bucketName = configuration["Storage:AWS:AWSS3:BucketName"]!;
+            _bucketName = _storageOptions.AWS.AWSS3.BucketName;
         }
 
         public async Task DeleteAsync(string pathOrContainerName, string fileName)
