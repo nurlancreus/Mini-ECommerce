@@ -33,7 +33,7 @@ namespace Mini_ECommerce.Application.Features.Commands.Product.CreateProduct
                 ProductImages = request.ProductImages,
             });
 
-            return new CreateProductCommandResponse() { Success = true, Message = "Product Created Successfully!", };
+            return new CreateProductCommandResponse() { Success = true, Message = "Product created Successfully!", };
         }
     }
 }

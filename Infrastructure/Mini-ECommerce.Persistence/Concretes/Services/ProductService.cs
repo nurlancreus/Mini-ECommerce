@@ -112,6 +112,8 @@ namespace Mini_ECommerce.Persistence.Concretes.Services
             {
                 throw new Exception("Could not delete product");
             }
+
+            await _productWriteRepository.SaveAsync();  
         }
 
         public async Task UpdateProductAsync(UpdateProductDTO updateProductDTO)
