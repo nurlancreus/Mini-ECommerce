@@ -3,15 +3,31 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Mini_ECommerce.API;
-using Mini_ECommerce.IntegrationTests;
 using Mini_ECommerce.Persistence.Contexts;
 using System.Linq;
+using Testcontainers.PostgreSql;
+using Microsoft.Extensions.Configuration;
+using Mini_ECommerce.IntegrationTests;
+using Microsoft.AspNetCore.Authorization.Policy;
 
 public class MiniECommerceWebApplicationFactory : WebApplicationFactory<Program>
 {
+    private PostgreSqlContainer _postgreSqlContainer;
+
+    // Setup the Testcontainer for PostgreSQL
+    public MiniECommerceWebApplicationFactory()
+    {
+        _postgreSqlContainer = new PostgreSqlBuilder()
+            .WithDatabase("MiniECommerceDbTest")
+            .WithUsername("mypostgres")
+            .WithPassword("mysecretpassword")
+            .Build();
+
+        _postgreSqlContainer.StartAsync().GetAwaiter().GetResult(); // Start the container
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -23,15 +39,15 @@ public class MiniECommerceWebApplicationFactory : WebApplicationFactory<Program>
                 services.Remove(descriptor);
             }
 
-            // Register a new DBContext that will use our test connection string
-            string? connString = GetConnectionString();
+            // Register the new DbContext using Testcontainer's connection string
+            string connString = _postgreSqlContainer.GetConnectionString();
             services.AddDbContext<MiniECommerceDbContext>(options =>
-                options.UseNpgsql(connString)); // Assuming you're using Npgsql
+                options.UseNpgsql(connString));
 
             // Add the authentication handler
             services.AddAuthentication(defaultScheme: "TestScheme")
-                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
-                    "TestScheme", options => { });
+               .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
+                   "TestScheme", options => { });
 
             // Ensure the database is created and migrated
             using var serviceProvider = services.BuildServiceProvider();
@@ -42,18 +58,11 @@ public class MiniECommerceWebApplicationFactory : WebApplicationFactory<Program>
         });
     }
 
-    private static string? GetConnectionString()
+    public override async ValueTask DisposeAsync()
     {
-        var configuration = new ConfigurationBuilder()
-            .AddUserSecrets<MiniECommerceWebApplicationFactory>()
-            .Build();
-
-        var connString = configuration.GetConnectionString("DefaultTest");
-        if (string.IsNullOrEmpty(connString))
-        {
-            throw new InvalidOperationException("Test connection string is not set in user secrets.");
-        }
-
-        return connString;
+        // Stop and dispose of the PostgreSQL container when tests are done
+        await _postgreSqlContainer.StopAsync();
+        await _postgreSqlContainer.DisposeAsync();
+        await base.DisposeAsync();
     }
 }
