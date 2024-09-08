@@ -24,13 +24,13 @@ using Mini_ECommerce.Application.Features.Queries.GetQrCodeToProduct;
 using Mini_ECommerce.Application.Features.Commands.ProductImageFile.ChangeMainImage;
 using Mini_ECommerce.Application.Features.Commands.ProductImageFile.RemoveProductImage;
 using Mini_ECommerce.Application.Features.Queries.ProductImageFile.GetProductImages;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Mini_ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-
-
+    [Authorize(AuthenticationSchemes = "TestScheme")]
     public class ProductsController : ControllerBase
     {
 
@@ -71,8 +71,9 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpPut("{Id}")]
         [AuthorizeDefinition(Menu = AuthorizedMenu.Products, ActionType = ActionType.Updating, Definition = "Update Product")]
-        public async Task<IActionResult> Update([FromBody, FromRoute] UpdateProductCommandRequest updateProductCommandRequest)
+        public async Task<IActionResult> Update([FromRoute] string Id, [FromBody] UpdateProductCommandRequest updateProductCommandRequest)
         {
+            updateProductCommandRequest.Id = Id;
             var response = await _mediator.Send(updateProductCommandRequest);
 
             return Ok(response);

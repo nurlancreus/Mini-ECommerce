@@ -51,7 +51,9 @@ namespace Mini_ECommerce.API.Controllers
         }
 
         [HttpGet]
-        // [Authorize(AuthenticationSchemes = "Admin")]
+        //[Authorize(AuthenticationSchemes = "Admin")]
+        [Authorize(AuthenticationSchemes = "TestScheme")]
+
         [AuthorizeDefinition(ActionType = ActionType.Reading, Definition = "Get All Users", Menu = AuthorizedMenu.Users)]
         public async Task<IActionResult> GetAllUsers([FromQuery] GetAllUsersQueryRequest getAllUsersQueryRequest)
         {
@@ -61,6 +63,7 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpGet("get-roles-to-user/{Id}")]
         // [Authorize(AuthenticationSchemes = "Admin")]
+        [Authorize(AuthenticationSchemes = "TestScheme")]
         [AuthorizeDefinition(ActionType = ActionType.Reading, Definition = "Get Roles To Users", Menu = AuthorizedMenu.Users)]
         public async Task<IActionResult> GetRolesToUser([FromRoute] GetRolesAssignedToUserQueryRequest getRolesToUserQueryRequest)
         {
@@ -70,6 +73,7 @@ namespace Mini_ECommerce.API.Controllers
 
         [HttpPost("assign-role-to-user")]
         // [Authorize(AuthenticationSchemes = "Admin")]
+        [Authorize(AuthenticationSchemes = "TestScheme")]
         [AuthorizeDefinition(ActionType = ActionType.Reading, Definition = "Assign Role To User", Menu = AuthorizedMenu.Users)]
         public async Task<IActionResult> AssignRoleToUser(AssignRoleToUserCommandRequest assignRoleToUserCommandRequest)
         {

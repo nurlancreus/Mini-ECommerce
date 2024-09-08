@@ -14,7 +14,6 @@ namespace Mini_ECommerce.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    // [Authorize(AuthenticationSchemes = "Admin")]
     public class RolesController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -39,9 +38,11 @@ namespace Mini_ECommerce.API.Controllers
             var response = await _mediator.Send(getRoleByIdQueryRequest);
             return Ok(response);
         }
+        
+        [HttpPost]
+        [Authorize(AuthenticationSchemes = "TestScheme")]
+       [AuthorizeDefinition(ActionType = ActionType.Writing, Definition = "Create Role", Menu = AuthorizedMenu.Roles)]
 
-        [HttpPost()]
-        [AuthorizeDefinition(ActionType = ActionType.Writing, Definition = "Create Role", Menu = AuthorizedMenu.Roles)]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoleCommandRequest createRoleCommandRequest)
         {
             var response = await _mediator.Send(createRoleCommandRequest);
