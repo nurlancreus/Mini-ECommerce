@@ -1,33 +1,37 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
-namespace Mini_ECommerce.IntegrationTests
+public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
-    public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
-    {
-        public TestAuthHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+    public TestAuthHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        ISystemClock clock)
         : base(options, logger, encoder, clock)
+    {
+    }
+
+    protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+    {
+        // Define the claims to simulate user identity and roles
+        var claims = new List<Claim>
         {
-        }
+            new Claim(ClaimTypes.Name, "nurlancreus"), // This should populate HttpContext.User.Identity.Name
+            new Claim("Permission", "CanViewPage"),
+            new Claim("Manager", "yes"),
+            new Claim(ClaimTypes.Role, "Administrator")
+        };
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
-        {
-            var identity = new ClaimsIdentity(Array.Empty<Claim>(), "Test");
-            var principal = new ClaimsPrincipal(identity);
-            var ticket = new AuthenticationTicket(principal, "TestScheme");
+        // Create the identity with claims and authentication scheme
+        var identity = new ClaimsIdentity(claims, "TestScheme");
+        var principal = new ClaimsPrincipal(identity);
+        var ticket = new AuthenticationTicket(principal, "TestScheme");
 
-            var result = AuthenticateResult.Success(ticket);
-
-            return Task.FromResult(result);
-        }
+        // Return a successful authentication result with the ticket
+        return Task.FromResult(AuthenticateResult.Success(ticket));
     }
 }
