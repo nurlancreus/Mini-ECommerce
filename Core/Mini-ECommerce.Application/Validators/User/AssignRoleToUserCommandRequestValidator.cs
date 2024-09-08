@@ -38,7 +38,6 @@ namespace Mini_ECommerce.Application.Validators.User
                     return false;
                 }
             }
-
             return true;
         }
     }
