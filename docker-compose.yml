@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  mini-ecommerce.api:
+    image: ${DOCKER_REGISTRY-}miniecommerceapi
+    build:
+      context: .
+      dockerfile: Presentation/Mini-ECommerce.API/Dockerfile
