@@ -27,5 +27,11 @@ jobs:
           docker build -t nurlancreus/mini-ecommerce:latest .
           docker push nurlancreus/mini-ecommerce:latest
 
+      - name: Debug Secrets
+        run: |
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}"
+          echo "DOCKERHUB_TOKEN length=${{ secrets.DOCKERHUB_PASSWORD }}"
+
+
       - name: Trigger Render Deployment
         run: curl -X POST -d '{}' ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
