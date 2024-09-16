@@ -3,7 +3,7 @@ name: Deploy to Render.com
 on:
   push:
     branches:
-      - main  # You can change this to your main branch
+      - master  # You can change this to your main branch
 
 jobs:
   build-and-deploy:
